@@ -1,0 +1,64 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.TireApp" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primary</item> <!-- button color, etc. -->
+        <item name="colorPrimaryVariant">@color/com_gray</item>
+        <item name="colorOnPrimary">@color/textColorOnPrimary</item> <!-- button text, etc. -->
+
+        <item name ="android:windowDisablePreview">true</item>
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">#00676f</item>
+        <item name="colorSecondaryVariant">@color/com_red</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">@color/statusBar</item>
+
+        <!-- Background color -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorBackground">@color/background</item>
+        <!-- IMPORTANT
+            (White screen issue)
+            Do not set the 'android:background' in the theme,
+             as it will prevent the CameraPreview from being displayed.
+        -->
+
+        <!-- Customize your theme here. -->
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:fontFamily">@font/proxima_nova_bold</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="Theme.AlertDlg" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitlePanelStyle">@style/Title.Panel.Center</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/Message.Center</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/Title.TextStyle</item>
+        <item name="android:background">@color/background</item>
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="Title.Panel.Center" parent="MaterialAlertDialog.MaterialComponents.Title.Panel">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="Title.TextStyle" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Message.Center" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="Alert.Button.Neutral" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:background">@drawable/rounded_button</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+</resources>

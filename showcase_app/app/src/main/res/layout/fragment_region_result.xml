@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_weight="2">
+
+    <Space
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/llRegionResult"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvRegionResult"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/proxima_nova_bold"
+            android:gravity="center"
+            android:lineSpacingExtra="-7dp"
+            android:textColor="@color/white"
+            android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tvResultNominatorInch"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp"
+            android:translationY="-70dp" />
+
+        <View
+            android:id="@+id/dividerLineInches"
+            android:layout_width="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_height="2dp"
+            android:gravity="center"
+            android:translationY="-65dp"
+            android:visibility="invisible"
+            android:background="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tvResultDenominatorInch"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp"
+            android:translationY="-65dp" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+    />
+
+</LinearLayout>

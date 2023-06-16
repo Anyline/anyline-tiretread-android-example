@@ -1,0 +1,137 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.firebase.appdistribution'
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.0"
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven { url "artifactregistry://europe-maven.pkg.dev/anyline-ttr-sdk/maven" }
+}
+
+ext.versionMajor = 5
+ext.versionMinor = 0
+ext.versionPatch = 0
+ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
+ext.buildNumber = System.getenv("BUILD_NUMBER")
+
+android {
+    namespace 'io.anyline.tiretread.demo'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "io.anyline.tiretread.demo"
+        minSdk 21
+        targetSdk 33
+        versionCode generateVersionCode()
+        versionName generateVersionName()
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.0"
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def flavor = variant.name
+            def versionName = variant.versionName
+            outputFileName = "tiretread_showcase_${flavor}_${versionName}.apk"
+        }
+    }
+    packagingOptions {
+        resources.merges += "META-INF/LICENSE*.md"
+    }
+
+    if (System.getenv("KEYSTORE_FILE_PATH") != null) {
+        println("Creating 'release' signing config")
+        signingConfigs {
+            release {
+                storeFile file(System.getenv("KEYSTORE_FILE_PATH"))
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            if (System.getenv("KEYSTORE_FILE_PATH") != null) {
+                println("Using 'release' signing config")
+                signingConfig signingConfigs.release
+            }
+            else{
+                println("NOT using the signing config")
+            }
+
+            firebaseAppDistribution {
+                artifactType="APK"
+                releaseNotesFile="./app/changelog.txt"
+                groups="android-testers"
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    // Anyline
+    implementation 'io.anyline.tiretread.sdk:shared:2.0.0'
+
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Gif
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
+
+    // Compose
+    implementation 'androidx.activity:activity-compose:1.7.0'
+}
+
+/**
+ * Generate the version code based on the defined ext. variables:
+ * versionMajor, versionMinor, versionPatch,
+ * e.g.: Version 5.1.3 => Version code 50130;
+ */
+private Integer generateVersionCode() {
+    return ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
+}
+
+/**
+ * Generate the version name based on the defined ext. variables:
+ * versionMajor, versionMinor, versionPatch, and versionClassifier.
+ */
+private String generateVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    // check if the version qualifier is defined, and append it to the version
+    // e.g. 1.2.3-rc.1
+    if (ext.get("versionClassifier") != null && ext.get("versionClassifier").toString() != "") {
+        versionName += "-" + ext.get("versionClassifier")
+    }
+    if (ext.get("buildNumber") != null && ext.get("buildNumber").toString() != "") {
+        versionName += "+" + ext.get("buildNumber")
+    }
+
+    return versionName
+}

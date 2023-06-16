@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="io.anyline.tiretread.demo.activities.MeasurementResultActivity">
+
+    <LinearLayout
+        android:id="@+id/llMeasurementResultsHeader"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/stone_grey">
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:orientation="vertical"
+            android:layout_gravity="start"
+            android:background="@color/stone_grey">
+
+            <ImageView
+                android:id="@+id/imageViewLogo"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_gravity="start"
+                android:layout_marginTop="5dp"
+                android:paddingEnd="100dp"
+                android:paddingStart="0dp"
+                android:background="@color/stone_grey"
+                android:src="@drawable/logo_anyline"
+                android:contentDescription="@string/iv_header_logo"/>
+        </LinearLayout>
+        <Space
+            android:layout_width="40dp"
+            android:layout_height="fill_parent"
+            android:background="@color/stone_grey"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="end"
+            android:background="@color/stone_grey">
+
+            <TextView
+                android:id="@+id/textHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:gravity="end"
+                android:background="@color/stone_grey"
+                android:text="@string/txt_header_tire_tread"
+                android:textColor="@color/white"
+                android:textSize="36dp" />
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="fill_parent"
+                android:background="@color/stone_grey"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:gravity="end"
+                android:background="@color/stone_grey"
+                android:text="@string/txt_header_showcase"
+                android:fontFamily="@font/proxima_nova_light"
+                android:textColor="@color/white"
+                android:textSize="36dp"
+                />
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="fill_parent"
+                android:background="@color/stone_grey"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="530dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="50dp"
+        android:background="#00000000"
+        android:progressTint="?attr/colorPrimary"
+        android:progressTintMode="src_atop"
+        android:progressBackgroundTint="?attr/colorPrimary"
+        android:progressBackgroundTintMode="src_atop"
+        android:id="@+id/progressBarResult"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnResultOk"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="finishActivity"
+        android:text="@string/btn_ok"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnResultReport"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="140dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="onClickedBtnReport"
+        android:text="@string/btn_details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnResultFeedback"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="220dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="onClickedBtnFeedback"
+        android:text="@string/btn_feedback"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtResultToken"
+        android:text="@string/txt_token"
+        android:gravity="start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/llMeasurementResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnResultReport"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llMeasurementResultsHeader">
+
+        <LinearLayout
+            android:id="@+id/llResultGlobal"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvResultGlobal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/proxima_nova_bold"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/tvResultInchGlobal"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@null"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="30dp"
+                android:translationY="-70dp" />
+
+            <View
+                android:id="@+id/dividerLineInches"
+                android:layout_width="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_height="2dp"
+                android:gravity="center"
+                android:translationY="-65dp"
+                android:visibility="invisible"
+                android:background="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/tvDenominatorGlobal"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@null"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="30dp"
+                android:translationY="-65dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="400dp"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/tread_result"
+            android:contentDescription="@string/iv_result" />
+
+        <LinearLayout
+            android:id="@+id/llMeasurementResultRegions"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <!-- The fragment_region_result are dynamically added here -->
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llError"
+        android:layout_width="500dp"
+        android:layout_height="200dp"
+        android:gravity="center"
+        android:background="@color/result_red"
+        android:padding="40dp"
+        android:visibility="invisible"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnResultReport"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llMeasurementResultsHeader">
+
+        <TextView
+            android:id="@+id/tvErrorTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/proxima_nova_bold"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/tvErrorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/proxima_nova_bold"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifResultLoadingAnimation"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@null"
+        android:src="@drawable/any_loading"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llMeasurementResultsHeader" />
+
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:text="@string/txt_waiting_for_result"
+        android:gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gifResultLoadingAnimation"
+        android:textStyle="bold"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

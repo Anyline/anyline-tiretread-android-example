@@ -1,0 +1,20 @@
+CHANGELOG
+
+---------------------------------------------------------------------
+[Unreleased]
+
+- "Abort" scan button
+- Sounds on the "Start" and "Stop" buttons
+
+----------------------------------------------------------------------------
+[Important]
+
+- Use your Production License Key.
+
+----------------------------------------------------------------------------
+
+[5.0.0] - 2023-06-15
+
+ADDED
+
+- TireTread Scan process using SDK v2

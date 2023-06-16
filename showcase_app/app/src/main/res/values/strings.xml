@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Button-->
+    <string name="btn_start">Start</string>
+    <string name="btn_settings">Settings</string>
+    <string name="btn_testing">API TEST</string>
+    <string name="btn_start_capture">Start Capture</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_submit">Submit</string>
+    <string name="btn_feedback">Feedback</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_details">Details</string>
+    <string name="btn_abort">Abort</string>
+    <string name="btn_initialize_sdk">Test Setup</string>
+
+    <string name="btn_start_uc">START</string>
+
+    <!--Text(View)-->
+    <string name="txt_main_screen_welcome_title">Welcome to the Anyline \nTire Tread Scanner!</string>
+    <string name="txt_main_to_start_scanning_press_the">To start scanning, press the</string>
+    <string name="txt_main_button_dot">button.</string>
+    <string name="txt_main_for_best_scanning_practices_please_go_to">For best scanning practices, please go to</string>
+    <string name="txt_main_tire_tread_docu_anyline_com">tiretreaddocu.anyline.com</string>
+    <string name="txt_header_tire_tread">Tire Tread</string>
+    <string name="txt_header_showcase">Showcase</string>
+    <string name="txt_feedback">Feedback</string>
+    <string name="txt_feedback_hint">Insert your feedback here…</string>
+    <string name="txt_waiting_for_result">Waiting for result...</string>
+    <string name="txt_token">Scan ID:</string>
+    <string name="txt_tire">Tire</string>
+    <string name="txt_distance">Distance</string>
+    <string name="txt_feedback_hint_mm">mm</string>
+    <string name="txt_feedback_title">Insert manual tread depths</string>
+    <string name="txt_feedback_saved">Feedback was saved!</string>
+    <string name="txt_feedback_failed">Feedback not saved.</string>
+    <string name="txt_comment_saved">Comment was saved!</string>
+    <string name="txt_comment_failed">Comment was not saved.</string>
+    <string name="txt_settings_save_data">Save Measurement Data:</string>
+    <string name="txt_settings_measurement_system">Use Imperial System:</string>
+    <string name="txt_settings_howto_license_key">If you need a license please reach out to</string>
+    <string name="txt_settings_howto_license_key_email">presales@anyline.com</string>
+    <string name="txt_license_key">License Key:</string>
+    <string name="txt_settings_measurement_mode">Accuracy / Speed:</string>
+    <string name="txt_settings">Settings</string>
+    <string name="txt_settings_mode_speed">High speed</string>
+    <string name="txt_settings_mode_accuracy">High accuracy</string>
+    <string name="txt_settings_version">App and SDK Version:</string>
+    <string name="txt_settings_device_name">Device Name:</string>
+    <string name="txt_upload_kbit_s">Upload KBit/s:</string>
+    <string name="txt_pick_a_measurement">Pick a measurement</string>
+    <string name="txt_app_name">Tire Tread Showcase</string>
+
+    <string name="txt_error_title_result_activity">The scan was not successful, please try again.</string>
+    <string name="txt_error_setup_failure">Setup failure. Check your License Key / Internet Connection and try again.</string>
+    <string name="txt_error_sdk_not_initalized">Setup failure. SDK is not initialized.</string>
+    <string name="txt_error_invalid_license_key">Invalid License Key</string>
+
+    <string name="txt_setup_correct">Setup correct</string>
+
+    <!--Image(View)-->
+    <string name="iv_header_logo">Anyline Logo</string>
+    <string name="iv_result">Result</string>
+    <string name="iv_upper_arrow">Arrow</string>
+
+    <!--EditText-->
+    <string name="et_settings_license_key_hint">Input your license key</string>
+    <string name="btn_pick">Pick</string>
+
+    <!-- Uploading Indicator -->
+    <string name="uploading">Uploading…</string>
+
+</resources>
