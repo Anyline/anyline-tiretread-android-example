@@ -27,8 +27,6 @@ import io.anyline.tiretread.demo.common.CustomTypefaceSpan
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
-import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
-
 
 private const val CAMERA_REQUEST_CODE = 200
 
@@ -65,14 +63,12 @@ class MainActivity : AppCompatActivity() {
         var errorMessage = "";
         if(licenseKey != null) {
             // Initialize the SDK
-            errorMessage = try {
-                AnylineTireTreadSdk.init(licenseKey, this)
+            var errorMessage = try {
+                AnylineTireTreadSdk.init(MY_LICENSE_KEY, MY_CONTEXT)
                 Log.i("Init SDK", "Success")
                 return true
-            } catch (e: SdkLicenseKeyInvalidException) {
-                getString(R.string.txt_error_invalid_license_key)
             } catch (e: SdkInitializeFailedException){
-                getString(R.string.txt_error_setup_failure)
+                e.message;
             }
         }
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()

@@ -28,6 +28,7 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
     lateinit var mainHandler: Handler
     var mediaPlayer : MediaPlayer = MediaPlayer()
     private val scanTimer = Timer()
+    private var aborted = false
 
     companion object {
         private var currentActivity: AppCompatActivity? = null
@@ -89,8 +90,22 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         }
     }
 
+    fun onClickedBtnAbort(view: View) {
+        aborted = true
+
+        TireTreadScanner.instance.stopScanning()
+        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop )
+        mediaPlayer.start()
+
+        // remove the current scan activity from the stack
+        finishAllAndRemoveTasks()
+    }
+
     override fun onScanStart(uuid: String?) {
         super.onScanStart(uuid)
+
+        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_start)
+        mediaPlayer.start()
 
         val pbProgress = currentActivity?.findViewById<ProgressBar>(R.id.pbProgress)
         if(pbProgress != null) {
@@ -105,7 +120,11 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
     override fun onScanStop(uuid: String?) {
         super.onScanStop(uuid)
         Log.d("SHOWCASE", "onScanStop: Scan stopped")
+
         scanTimer.cancel()
+
+        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop )
+        mediaPlayer.start()
 
         val pbProgress = currentActivity?.findViewById<ProgressBar>(R.id.pbProgress)
         pbProgress?.progress = 0
@@ -126,7 +145,17 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
     override fun onUploadCompleted(uuid: String?) {
         super.onUploadCompleted(uuid)
+        Log.d("SHOWCASE", "onUploadCompleted")
 
+        if (!aborted && !uuid.isNullOrEmpty()) {
+            openLoadAndResultScreen(uuid)
+        }
+
+        // remove the current scan activity from the stack
+        finishAllAndRemoveTasks()
+    }
+
+    private fun openLoadAndResultScreen(uuid: String) {
         val bundle = Bundle()
         bundle.putString("measurement_uuid", uuid)
 
@@ -134,12 +163,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
             it.putExtras(bundle)
         }
 
-        Log.d("SHOWCASE", "onUploadCompleted")
         // Start the result activity
         startActivity(intent)
-
-        // remove the current scan activity from the stack
-        finishAllAndRemoveTasks()
     }
 
     override fun onUploadFailed(uuid: String?, exception: Exception) {

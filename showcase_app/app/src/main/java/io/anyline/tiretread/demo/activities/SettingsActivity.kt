@@ -8,6 +8,7 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,6 @@ import io.anyline.tiretread.demo.common.StringUtils
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.BuildConfig
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
-import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -46,9 +46,8 @@ class SettingsActivity : AppCompatActivity() {
         try {
             AnylineTireTreadSdk.init(newLicenseKey, this)
             Toast.makeText(this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT).show()
-        } catch (e: SdkLicenseKeyInvalidException) {
-            Toast.makeText(this, getString(R.string.txt_error_invalid_license_key), Toast.LENGTH_SHORT).show()
         } catch (e: SdkInitializeFailedException){
+            Log.e("SettingsActivity", e.message, e)
             Toast.makeText(this,
                 getString(R.string.txt_error_setup_failure),
                 Toast.LENGTH_LONG).show()
