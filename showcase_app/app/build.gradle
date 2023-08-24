@@ -12,8 +12,8 @@ repositories {
 }
 
 ext.versionMajor = 5
-ext.versionMinor = 0
-ext.versionPatch = 0
+ext.versionMinor = 1
+ext.versionPatch = 4
 ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
 ext.buildNumber = System.getenv("BUILD_NUMBER")
 
@@ -80,7 +80,6 @@ android {
             firebaseAppDistribution {
                 artifactType="APK"
                 releaseNotesFile="./app/changelog.txt"
-                groups="android-testers"
             }
         }
     }
@@ -92,7 +91,7 @@ android {
 
 dependencies {
     // Anyline
-    implementation 'io.anyline.tiretread.sdk:shared:2.0.0'
+    implementation 'io.anyline.tiretread.sdk:shared:2+'
 
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

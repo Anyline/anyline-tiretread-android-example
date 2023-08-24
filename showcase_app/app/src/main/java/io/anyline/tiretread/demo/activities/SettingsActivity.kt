@@ -21,6 +21,7 @@ import io.anyline.tiretread.demo.common.StringUtils
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.BuildConfig
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
+import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -46,6 +47,11 @@ class SettingsActivity : AppCompatActivity() {
         try {
             AnylineTireTreadSdk.init(newLicenseKey, this)
             Toast.makeText(this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT).show()
+        } catch (e: SdkLicenseKeyInvalidException){
+            Log.e("SettingsActivity", e.message, e)
+            Toast.makeText(this,
+                getString(R.string.txt_error_setup_failure_license_key),
+                Toast.LENGTH_LONG).show()
         } catch (e: SdkInitializeFailedException){
             Log.e("SettingsActivity", e.message, e)
             Toast.makeText(this,

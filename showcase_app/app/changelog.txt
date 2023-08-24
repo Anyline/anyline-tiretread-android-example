@@ -1,20 +1,41 @@
 CHANGELOG
 
----------------------------------------------------------------------
-[Unreleased]
-
-- "Abort" scan button
-- Sounds on the "Start" and "Stop" buttons
-
 ----------------------------------------------------------------------------
-[Important]
+[5.1.4] - 2023-08-18
 
-- Use your Production License Key.
+ADDED
 
-----------------------------------------------------------------------------
+- Display error message when the License Key was not informed.
 
-[5.0.0] - 2023-06-15
+[5.1.3] - 2023-08-14
+
+FIX
+
+- Improve camera focus.
+
+[5.1.2] - 2023-08-03
+
+FIX
+
+- Update SDK to v2.1.1 to include the fix for the Stop button not working issue.
+
+[5.1.1] - 2023-08-01
+
+ADDED
+
+- Clipboard copy action now display a Toast informing that the copying was successful.
+- Update to SDK v2.1.0 to include major improvements in the focus acquisition and calculation.
+
+[5.1.0] - 2023-07-26
+
+ADDED
+
+- Scan ID can now be copied to the clipboard by tapping on it.
+
+[5.0.0] - 2023-06-19
 
 ADDED
 
 - TireTread Scan process using SDK v2
+- "Abort scan" button
+- Feedback sounds on the start and stop scan buttons

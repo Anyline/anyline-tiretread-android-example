@@ -96,21 +96,6 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnMain_TEST"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="80dp"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/primary_anyline"
-        android:onClick="onClickedBtnSettings"
-        android:scaleType="center"
-        android:text="@string/btn_testing"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="TextSizeCheck"
-        android:visibility="gone" />
-
-    <Button
         android:id="@+id/btnMain_settings"
         android:layout_width="125dp"
         android:layout_height="60dp"

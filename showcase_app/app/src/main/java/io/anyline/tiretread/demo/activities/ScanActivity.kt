@@ -30,6 +30,10 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
     private val scanTimer = Timer()
     private var aborted = false
 
+    // this value is for informational purpose only
+    // the SDK automatically finishes the scan process after 10s
+    private val maxScanDuration = 10
+
     companion object {
         private var currentActivity: AppCompatActivity? = null
 
@@ -93,8 +97,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
     fun onClickedBtnAbort(view: View) {
         aborted = true
 
-        TireTreadScanner.instance.stopScanning()
-        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop )
+        TireTreadScanner.instance.abortScanning()
+        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop)
         mediaPlayer.start()
 
         // remove the current scan activity from the stack
@@ -110,8 +114,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         val pbProgress = currentActivity?.findViewById<ProgressBar>(R.id.pbProgress)
         if(pbProgress != null) {
             pbProgress.visibility = View.VISIBLE
-            pbProgress.max = 10
-            pbProgress.progress = 10
+            pbProgress.max = maxScanDuration
+            pbProgress.progress = maxScanDuration
 
             scanTimer.schedule(1000, 1000) { pbProgress.progress -= 1 }
         }

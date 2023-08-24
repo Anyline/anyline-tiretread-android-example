@@ -1,6 +1,8 @@
 package io.anyline.tiretread.demo.activities
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -78,6 +80,7 @@ class MeasurementResultActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_measurement_result)
@@ -86,12 +89,24 @@ class MeasurementResultActivity : AppCompatActivity() {
         bundle?.also {
             measurementUuid = it.getString("measurement_uuid") ?: ""
         }
-        findViewById<TextView>(R.id.txtResultToken).text =
-            "${getString(R.string.txt_token)} $measurementUuid"
+
+        val txtResultToken = findViewById<TextView>(R.id.txtResultToken)
+        txtResultToken.text = "${getString(R.string.txt_token)} $measurementUuid"
+
+        txtResultToken.setOnClickListener {
+            copyTextToClipboard(measurementUuid)
+            Toast.makeText(this, "Scan ID copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
 
         initLoadingScreen()
 
         resultTimer.schedule(resultUpdateTask, 0L, 3000L)
+    }
+
+    private fun copyTextToClipboard(text: String) {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Copied Text", text)
+        clipboardManager.setPrimaryClip(clipData)
     }
 
     override fun onDestroy() {

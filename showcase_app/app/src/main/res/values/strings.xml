@@ -53,6 +53,7 @@
     <string name="txt_app_name">Tire Tread Showcase</string>
 
     <string name="txt_error_title_result_activity">The scan was not successful, please try again.</string>
+    <string name="txt_error_setup_failure_license_key">Setup failure. Check your License Key and try again.</string>
     <string name="txt_error_setup_failure">Setup failure. Check your License Key / Internet Connection and try again.</string>
     <string name="txt_error_sdk_not_initalized">Setup failure. SDK is not initialized.</string>
     <string name="txt_error_invalid_license_key">Invalid License Key</string>
