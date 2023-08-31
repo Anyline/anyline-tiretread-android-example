@@ -13,7 +13,7 @@ repositories {
 
 ext.versionMajor = 5
 ext.versionMinor = 1
-ext.versionPatch = 4
+ext.versionPatch = 5
 ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
 ext.buildNumber = System.getenv("BUILD_NUMBER")
 
