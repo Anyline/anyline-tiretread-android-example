@@ -1,6 +1,30 @@
 CHANGELOG
 
 ----------------------------------------------------------------------------
+[5.4.0] - 2023-10-25
+
+ADDED
+
+- Show PDF report in app with option to download it
+- Rename "Start Capture" button to "Start"
+
+[5.3.0] - 2023-10-18
+
+ADDED
+
+- Rename 'START' button to "OPEN SCANNER".
+- In the result screen, use the new "valueInch32nds" property provided by the TTR SDK v2.3.0+.
+
+[5.2.0] - 2023-10-02
+
+ADDED
+
+- Added a tutorial screen to guide the user through the optimal scan process.
+
+CHANGE
+
+- Removed spoken scan feedback.
+
 [5.1.5] - 2023-08-24
 
 CHANGE
@@ -36,12 +60,12 @@ ADDED
 
 ADDED
 
-- Scan ID can now be copied to the clipboard by tapping on it.
+- Scan ID can now be copied to the clipboard by tapping on it
 
 [5.0.0] - 2023-06-19
 
 ADDED
 
-- TireTread Scan process using SDK v2
-- "Abort scan" button
-- Feedback sounds on the start and stop scan buttons
+- TireTread Scan process using SDK v2.
+- "Abort scan" button.
+- Feedback sounds on the start and stop scan buttons.

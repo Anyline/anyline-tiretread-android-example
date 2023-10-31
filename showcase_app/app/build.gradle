@@ -7,13 +7,14 @@ plugins {
 
 repositories {
     google()
+    jcenter()
     mavenCentral()
     maven { url "artifactregistry://europe-maven.pkg.dev/anyline-ttr-sdk/maven" }
 }
 
 ext.versionMajor = 5
-ext.versionMinor = 1
-ext.versionPatch = 5
+ext.versionMinor = 4
+ext.versionPatch = 0
 ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
 ext.buildNumber = System.getenv("BUILD_NUMBER")
 
@@ -72,20 +73,20 @@ android {
             if (System.getenv("KEYSTORE_FILE_PATH") != null) {
                 println("Using 'release' signing config")
                 signingConfig signingConfigs.release
-            }
-            else{
+            } else {
                 println("NOT using the signing config")
             }
 
             firebaseAppDistribution {
-                artifactType="APK"
-                releaseNotesFile="./app/changelog.txt"
+                artifactType = "APK"
+                releaseNotesFile = "./app/changelog.txt"
             }
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 }
 
@@ -95,7 +96,7 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -105,7 +106,12 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
 
     // Compose
-    implementation 'androidx.activity:activity-compose:1.7.0'
+    implementation 'androidx.activity:activity-compose:1.7.2'
+
+    // PDF Viewer
+    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 }
 
 /**

@@ -2,9 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="true" />
-    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,6 +22,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/app_icon"
         android:label="@string/txt_app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/app_icon"
         android:screenOrientation="sensorLandscape"
         android:supportsRtl="true"
@@ -35,6 +42,9 @@
             android:name=".activities.MeasurementResultActivity"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:name=".activities.TutorialActivity"
+            android:screenOrientation="sensorLandscape" />
+        <activity
             android:name=".activities.ResultFeedbackActivity"
             android:screenOrientation="sensorLandscape" />
         <activity
@@ -43,6 +53,10 @@
         <activity
             android:name=".activities.ScanActivity"
             android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".activities.MeasurementResultDetailsActivity"
+            android:exported="true"
             android:screenOrientation="sensorLandscape" />
 
         <provider

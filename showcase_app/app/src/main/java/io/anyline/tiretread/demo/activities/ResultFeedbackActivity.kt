@@ -114,7 +114,8 @@ class ResultFeedbackActivity : Activity() {
 
     fun onClickedBtnSubmit(view: View) {
         val useImperial = PreferencesUtils.shouldUseImperialSystem(this)
-        val commentText = (findViewById<EditText>(R.id.etResultFeedback_userInput)?.text ?: "").toString()
+        val commentText =
+            (findViewById<EditText>(R.id.etResultFeedback_userInput)?.text ?: "").toString()
         val editedResult = editTextsList.map {
             val idx = editTextsList.indexOf(it)
             val region = measurementResult.regions[idx]
@@ -134,11 +135,13 @@ class ResultFeedbackActivity : Activity() {
             }
         }
 
-        val jsonParser = Json(DefaultJson){prettyPrint = true}
+        val jsonParser = Json(DefaultJson) { prettyPrint = true }
         AnylineTireTreadSdk.sendTreadDepthResultFeedback(measurementUuid, editedResult,
-            onSendTreadDepthResultSucceed =  {
-                Log.i("SHOWCASE", "Send result feedback success. Your result =\n" +
-                    jsonParser.encodeToString(editedResult))
+            onSendTreadDepthResultSucceed = {
+                Log.i(
+                    "SHOWCASE", "Send result feedback success. Your result =\n" +
+                            jsonParser.encodeToString(editedResult)
+                )
 
                 Toast.makeText(
                     this,
@@ -157,7 +160,7 @@ class ResultFeedbackActivity : Activity() {
 
         if (commentText.isNotBlank()) {
             AnylineTireTreadSdk.sendCommentFeedback(measurementUuid, commentText,
-                onSendCommentSucceed =  {
+                onSendCommentSucceed = {
                     Log.i("SHOWCASE", "Send comment success. Your comment =\n$commentText")
 
                     Toast.makeText(

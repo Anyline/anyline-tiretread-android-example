@@ -13,6 +13,10 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
         this.typeface = typeface;
     }
 
+    private static void applyCustomTypeFace(Paint paint, Typeface tf) {
+        paint.setTypeface(tf);
+    }
+
     @Override
     public void updateDrawState(TextPaint ds) {
         applyCustomTypeFace(ds, typeface);
@@ -21,9 +25,5 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
     @Override
     public void updateMeasureState(TextPaint paint) {
         applyCustomTypeFace(paint, typeface);
-    }
-
-    private static void applyCustomTypeFace(Paint paint, Typeface tf) {
-        paint.setTypeface(tf);
     }
 }

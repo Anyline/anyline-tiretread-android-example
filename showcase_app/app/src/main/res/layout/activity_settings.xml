@@ -90,9 +90,8 @@
         android:layout_marginTop="60dp"
         android:background="@drawable/rounded_button"
         android:backgroundTint="@color/primary_anyline"
-        android:textColor="@color/textColorOnPrimary_anyline"
-        android:onClick="onClickedBtnOk"
         android:text="@string/btn_ok"
+        android:textColor="@color/textColorOnPrimary_anyline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -103,25 +102,23 @@
         android:layout_marginTop="140dp"
         android:background="@drawable/rounded_button"
         android:backgroundTint="@color/primary_anyline"
-        android:textColor="@color/textColorOnPrimary_anyline"
-        android:onClick="onClickedBtnInitializeSDK"
         android:text="@string/btn_initialize_sdk"
+        android:textColor="@color/textColorOnPrimary_anyline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnSettingsFeedback"
+        android:id="@+id/btnSettingsCancel"
         android:layout_width="125dp"
         android:layout_height="60dp"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="300dp"
         android:background="@drawable/rounded_button"
         android:backgroundTint="@color/primary_anyline"
+        android:scaleType="center"
+        android:text="@string/btn_cancel"
         android:textColor="@color/textColorOnPrimary_anyline"
-        android:onClick="onClickedBtnFeedback"
-        android:text="@string/btn_feedback"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -139,263 +136,160 @@
         android:id="@+id/scrollViewSettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:fadeScrollbars="false"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/app_and_sdk_version_label"
         app:layout_constraintEnd_toStartOf="@+id/btnSettingsOk"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnSettingsOk">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_in_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="200dp" />
+
+            <TextView
+                android:id="@+id/use_imperial_system_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:text="@string/txt_settings_measurement_system"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/cbSettingsImperialSystem"
+                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cbSettingsImperialSystem" />
+
+            <CheckBox
+                android:id="@+id/cbSettingsImperialSystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/stone_grey"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
+                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/license_key_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:text="@string/txt_license_key"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/etSettingsLicenseKey"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/etSettingsLicenseKey" />
+
+            <EditText
+                android:id="@+id/etSettingsLicenseKey"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:autofillHints="text"
+                android:background="@drawable/shape_border_edit_text"
+                android:hint="@string/et_settings_license_key_hint"
+                android:inputType="text"
+                android:textColor="@color/textColor"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
+                app:layout_constraintTop_toBottomOf="@id/cbSettingsImperialSystem" />
+
+            <TextView
+                android:id="@+id/tvHowToLicenseKey"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/llSettingsSaveMeasurementData"
-                android:visibility="invisible"
-                >
-                <!-- save measurement data -->
-                <TextView
-                    android:id="@+id/textViewSaveMeasurement"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|start"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_settings_save_data"
-                    android:textSize="16dp" />
+                android:layout_gravity="center|start"
+                android:layout_marginTop="8dp"
+                android:text="@string/txt_settings_howto_license_key"
+                android:textSize="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etSettingsLicenseKey" />
 
-                <CheckBox
-                    android:id="@+id/cbSettingsSaveMeasurementData"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/stone_grey"
-                    android:scaleX="1.5"
-                    android:scaleY="1.5" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|start"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_settings_measurement_system"
-                    android:textSize="16dp" />
-
-                <CheckBox
-                    android:id="@+id/cbSettingsImperialSystem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/stone_grey"
-                    android:layout_marginStart="-10dp"
-                    android:scaleX="1.5"
-                    android:scaleY="1.5" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/scan_speed_label"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!-- license key -->
-                <TextView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|start"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_license_key"
-                    android:textSize="16dp" />
+                android:text="@string/settings_screen_scan_speed_label"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/scan_speed_text_view"
+                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/scan_speed_text_view" />
 
-                <EditText
-                    android:id="@+id/etSettingsLicenseKey"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="fill_vertical"
-                    android:layout_marginEnd="20dp"
-                    android:layout_weight="1"
-                    android:autofillHints="text"
-                    android:background="@drawable/shape_border_edit_text"
-                    android:hint="@string/et_settings_license_key_hint"
-                    android:inputType="text"
-                    android:textColor="@color/textColor"
-                    android:textSize="16dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/scan_speed_text_view"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/settings_screen_fast"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
+                app:layout_constraintTop_toBottomOf="@id/tvHowToLicenseKey"
+                app:switchPadding="2dp" />
 
-                <TextView
-                    android:id="@+id/tvHowToLicenseKey"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|start"
-                    android:layout_marginEnd="10dp"
-                    android:textSize="14dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:orientation="horizontal"
-                android:visibility="invisible">
-
-                <TextView
-                    android:id="@+id/textViewAccuracySpeed"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|start"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_settings_measurement_mode"
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/textViewHighSpeed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="end"
-                    android:text="@string/txt_settings_mode_speed"
-                    android:textSize="16dp" />
-
-                <Switch
-                    android:id="@+id/swSettingsMeasurementQuality"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:switchMinWidth="70dp"
-                    android:thumbTint="@color/primary_anyline" />
-
-                <TextView
-                    android:id="@+id/textViewHighAccuracy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="end"
-                    android:text="@string/txt_settings_mode_accuracy"
-                    android:textSize="16dp" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="fill_parent"
-                android:layout_height="10dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!-- save measurement data -->
-                <TextView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|start"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_settings_version"
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/tvSettingsVersion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="16dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <!-- license id -->
-
-                <TextView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_settings_device_name"
-                    android:textSize="16dp" />
-
-                <TextView
-                    android:id="@+id/tvSettingsDeviceName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="start"
-                    android:textSize="16dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <!-- license id -->
-                <TextView
-                    android:id="@+id/tvUploadKbps"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/txt_upload_kbit_s"
-                    android:textSize="16dp"
-                    android:visibility="invisible" />
-
-                <TextView
-                    android:id="@+id/tvSettingsUpload"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:gravity="start"
-                    android:textSize="16dp" />
-
-            </LinearLayout>
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/btnSettingsCancel"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="300dp"
-        android:background="@drawable/rounded_button"
-        android:backgroundTint="@color/primary_anyline"
-        android:textColor="@color/textColorOnPrimary_anyline"
-        android:onClick="onClickedBtnCancel"
-        android:scaleType="center"
-        android:text="@string/btn_cancel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="200dp" />
 
     <TextView
-        android:id="@+id/tvSettingsErrorView"
-        android:layout_width="500dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/proxima_nova_bold"
-        android:gravity="center"
-        android:textAlignment="center"
+        android:id="@+id/app_and_sdk_version_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_settings_version"
         android:textSize="16dp"
-        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/device_name_label"
+        app:layout_constraintEnd_toEndOf="@id/device_name_label"
+        app:layout_constraintStart_toStartOf="@id/device_name_label" />
+
+    <TextView
+        android:id="@+id/tvSettingsVersion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/app_and_sdk_version_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvSettingsDeviceName"
+        app:layout_constraintTop_toTopOf="@id/app_and_sdk_version_label" />
+
+    <TextView
+        android:id="@+id/device_name_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/txt_settings_device_name"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnInitializeSDK"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearHeader" />
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent" />
 
-
+    <TextView
+        android:id="@+id/tvSettingsDeviceName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/device_name_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/guideline" />
 </androidx.constraintlayout.widget.ConstraintLayout>

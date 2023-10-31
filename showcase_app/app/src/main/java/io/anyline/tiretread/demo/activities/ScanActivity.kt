@@ -2,81 +2,86 @@ package io.anyline.tiretread.demo.activities
 
 import android.content.Intent
 import android.media.MediaPlayer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.content.ContextCompat
 import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.PreferencesUtils
-import io.anyline.tiretread.sdk.scanner.*
+import io.anyline.tiretread.demo.databinding.ActivityScanBinding
+import io.anyline.tiretread.sdk.scanner.DistanceStatus
+import io.anyline.tiretread.sdk.scanner.MeasurementSystem
+import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
+import io.anyline.tiretread.sdk.scanner.TireTreadScanner
 import io.anyline.tiretread.sdk.utils.inchStringToTriple
 import io.anyline.tiretread.sdk.utils.inchToFractionString
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.concurrent.schedule
 
 class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
-    lateinit var mainHandler: Handler
-    var mediaPlayer : MediaPlayer = MediaPlayer()
-    private val scanTimer = Timer()
+    private lateinit var mainHandler: Handler
+    private lateinit var binding: ActivityScanBinding
+    private lateinit var countDownTimer: CountDownTimer
+
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
     private var aborted = false
-
-    // this value is for informational purpose only
-    // the SDK automatically finishes the scan process after 10s
-    private val maxScanDuration = 10
-
-    companion object {
-        private var currentActivity: AppCompatActivity? = null
-
-        private val activities: ArrayList<AppCompatActivity> = arrayListOf()
-
-        private fun finishAllAndRemoveTasks() {
-            for (activity in activities) activity.finishAndRemoveTask()
-        }
-    }
+    private var maxScanDuration: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scan)
+        binding = ActivityScanBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Start UI update loop
         Handler(this.mainLooper).removeCallbacksAndMessages(null)
         mainHandler = Handler(this.mainLooper)
 
-        if (currentActivity != this) {
-            currentActivity?.finish()
-            currentActivity = this
-        }
-
         // Configure the TireTreadScanView
-        val scanView = currentActivity!!.findViewById<TireTreadScanView>(R.id.tireTreadScanView)
-        scanView.scanViewCallback = this
-        scanView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(currentActivity!!))
-        scanView.measurementSystem = if(PreferencesUtils.shouldUseImperialSystem(currentActivity!!)) {
-            MeasurementSystem.Imperial
-        }else{
-            MeasurementSystem.Metric
+        binding.tireTreadScanView.apply {
+            scanViewCallback = this@ScanActivity
+            setViewCompositionStrategy(
+                ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
+                    this@ScanActivity
+                )
+            )
+            measurementSystem = if (PreferencesUtils.shouldUseImperialSystem(this@ScanActivity)) {
+                MeasurementSystem.Imperial
+            } else {
+                MeasurementSystem.Metric
+            }
+        }
+        binding.tmpOverlay.visibility = View.GONE
+
+        binding.btnAbort.setOnClickListener {
+            abortScan()
         }
 
-        // Overlay for the upload information
-        currentActivity!!.findViewById<TextView>(R.id.tmpOverlay).visibility = View.GONE
+        maxScanDuration = if (PreferencesUtils.isFastScanSpeedSet(this)) {
+            MAX_DURATION_SCAN_SPEED_FAST_MILLIS
+        } else {
+            MAX_DURATION_SCAN_SPEED_SLOW_MILLIS
+        }
 
-        activities.add(this)
-    }
+        binding.pbProgress.max = maxScanDuration.toInt()
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("SHOWCASE", "Activity Destroyed")
-        activities.remove(this)
+        countDownTimer = object : CountDownTimer(maxScanDuration, 500L) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                binding.pbProgress.progress = millisUntilFinished.toInt()
+            }
+
+            override fun onFinish() {
+                if (maxScanDuration == MAX_DURATION_SCAN_SPEED_FAST_MILLIS) {
+                    stopScanning()
+                }
+            }
+        }
     }
 
     fun onClickedBtnStartScan(view: View) {
@@ -87,22 +92,26 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
             scannerInstance.startScanning()
             btnStartScan.text = "Stop"
         } else {
-            btnStartScan.visibility = View.GONE
-            btnStartScan.isEnabled = false
-            btnStartScan.isClickable = false
-            scannerInstance.stopScanning()
+            stopScanning()
         }
     }
 
-    fun onClickedBtnAbort(view: View) {
-        aborted = true
+    private fun stopScanning() {
+        with(binding.btnStartScan) {
+            visibility = View.GONE
+            isEnabled = false
+            isClickable = false
+        }
+        TireTreadScanner.instance.stopScanning()
+    }
 
+    private fun abortScan() {
         TireTreadScanner.instance.abortScanning()
+        aborted = true
+        countDownTimer.cancel()
         mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop)
         mediaPlayer.start()
-
-        // remove the current scan activity from the stack
-        finishAllAndRemoveTasks()
+        finish()
     }
 
     override fun onScanStart(uuid: String?) {
@@ -111,52 +120,39 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_start)
         mediaPlayer.start()
 
-        val pbProgress = currentActivity?.findViewById<ProgressBar>(R.id.pbProgress)
-        if(pbProgress != null) {
-            pbProgress.visibility = View.VISIBLE
-            pbProgress.max = maxScanDuration
-            pbProgress.progress = maxScanDuration
-
-            scanTimer.schedule(1000, 1000) { pbProgress.progress -= 1 }
-        }
+        binding.pbProgress.visibility = View.VISIBLE
+        binding.pbProgress.progress = maxScanDuration.toInt()
+        countDownTimer.start()
     }
 
     override fun onScanStop(uuid: String?) {
         super.onScanStop(uuid)
-        Log.d("SHOWCASE", "onScanStop: Scan stopped")
-
-        scanTimer.cancel()
-
-        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop )
+        mediaPlayer = MediaPlayer.create(baseContext, R.raw.sound_stop)
         mediaPlayer.start()
 
-        val pbProgress = currentActivity?.findViewById<ProgressBar>(R.id.pbProgress)
-        pbProgress?.progress = 0
+        binding.pbProgress.progress = 0
+        countDownTimer.cancel()
 
         mainHandler.post {
-            currentActivity?.apply {
-                val startButton = findViewById<Button>(R.id.btnStartScan)
-                val overlay = findViewById<TextView>(R.id.tmpOverlay)
+            hideStartButton()
+            binding.tmpOverlay.visibility = View.VISIBLE
+        }
+    }
 
-                startButton?.visibility = View.GONE
-                startButton?.isEnabled = false
-                startButton?.isClickable = false
-
-                overlay?.visibility = View.VISIBLE
-            }
+    private fun hideStartButton() {
+        binding.btnStartScan.apply {
+            visibility = View.GONE
+            isEnabled = false
+            isClickable = false
         }
     }
 
     override fun onUploadCompleted(uuid: String?) {
         super.onUploadCompleted(uuid)
-        Log.d("SHOWCASE", "onUploadCompleted")
 
         if (!aborted && !uuid.isNullOrEmpty()) {
             openLoadAndResultScreen(uuid)
         }
-
-        // remove the current scan activity from the stack
-        finishAllAndRemoveTasks()
     }
 
     private fun openLoadAndResultScreen(uuid: String) {
@@ -166,9 +162,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         val intent = Intent(this, MeasurementResultActivity::class.java).also {
             it.putExtras(bundle)
         }
-
-        // Start the result activity
         startActivity(intent)
+        finish()
     }
 
     override fun onUploadFailed(uuid: String?, exception: Exception) {
@@ -176,30 +171,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         val scannerInstance = TireTreadScanner.instance
         scannerInstance.stopScanning()
 
-        Log.e("SHOWCASE", "onUploadFailed: ", exception)
         mainHandler.post {
             Toast.makeText(applicationContext, "Upload Failed", Toast.LENGTH_SHORT).show()
-        }
-
-        // remove the current scan activity from the stack
-        finishAllAndRemoveTasks()
-    }
-
-    override fun onImageUploaded(uuid: String?, uploaded: Int, total: Int) {
-        super.onImageUploaded(uuid, uploaded, total)
-
-        // we will only display information about the upload once the scan process is finished
-        if (TireTreadScanner.instance.isScanning) return
-
-        val pbProgress = currentActivity?.findViewById<ProgressBar>(R.id.pbProgress)
-        pbProgress?.visibility = View.VISIBLE
-
-        val isUploading = uploaded < total
-        if (isUploading) {
-            mainHandler.post {
-                pbProgress?.max = total
-                pbProgress?.progress = uploaded
-            }
         }
     }
 
@@ -216,13 +189,12 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
     ) {
         super.onDistanceChanged(uuid, previousStatus, newStatus, previousDistance, newDistance)
 
-        val scanView = currentActivity!!.findViewById<TireTreadScanView>(R.id.tireTreadScanView)
-        val measurementSystem = scanView.measurementSystem
-        val distanceString: String = if(measurementSystem == MeasurementSystem.Imperial){
-            "${inchStringToTriple(inchToFractionString(newDistance.toDouble())).first} in"
-        } else {
-            "${(newDistance/10).toInt()} cm"
-        }
+        val distanceString =
+            if (binding.tireTreadScanView.measurementSystem == MeasurementSystem.Imperial) {
+                "${inchStringToTriple(inchToFractionString(newDistance.toDouble())).first} in"
+            } else {
+                "${(newDistance / 10).toInt()} cm"
+            }
 
         var noticingMessage = ""
         var color = 0
@@ -260,39 +232,10 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         }
 
         mainHandler.post {
-            val tvDistance = currentActivity?.findViewById<TextView>(R.id.tvDistance)
-//            val indicator = currentActivity?.findViewById<LinearLayout>(R.id.distanceIndicator)
-//
-//            indicator?.apply {
-//                this.background.setTint(color)
-//            }
-            tvDistance?.apply {
+            binding.tvDistance.apply {
                 text = noticingMessage
                 setTextColor(color)
             }
-
-            if (newStatus != previousStatus) {
-                playAudioDistanceFeedback(newStatus)
-            }
-        }
-    }
-
-    private fun playAudioDistanceFeedback(distanceStatus: DistanceStatus) {
-        mediaPlayer.stop()
-        when (distanceStatus) {
-            DistanceStatus.OK -> {
-                mediaPlayer = MediaPlayer.create(baseContext, R.raw.distance_ok)
-                mediaPlayer.start()
-            }
-            DistanceStatus.CLOSE, DistanceStatus.TOO_CLOSE -> {
-                mediaPlayer = MediaPlayer.create(baseContext, R.raw.increase_distance)
-                mediaPlayer.start()
-            }
-            DistanceStatus.FAR, DistanceStatus.TOO_FAR -> {
-                mediaPlayer = MediaPlayer.create(baseContext, R.raw.decrease_distance)
-                mediaPlayer.start()
-            }
-            else -> { }
         }
     }
 
@@ -305,7 +248,13 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
                 }
                 true
             }
+
             else -> super.dispatchKeyEvent(event)
         }
+    }
+
+    companion object {
+        private const val MAX_DURATION_SCAN_SPEED_FAST_MILLIS = 7500L
+        private const val MAX_DURATION_SCAN_SPEED_SLOW_MILLIS = 10000L
     }
 }

@@ -1,7 +1,7 @@
 package io.anyline.tiretread.demo.common
 
 class StringUtils {
-    companion object{
+    companion object {
         /**
          * Convert first letter to upper case.
          *

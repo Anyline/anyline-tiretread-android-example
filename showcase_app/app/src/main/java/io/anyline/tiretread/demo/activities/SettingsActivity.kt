@@ -1,23 +1,20 @@
 package io.anyline.tiretread.demo.activities
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import io.anyline.tiretread.demo.AppInfo
+import io.anyline.tiretread.demo.CustomBottomSheet
 import io.anyline.tiretread.demo.HardwareInfo
 import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.common.StringUtils
+import io.anyline.tiretread.demo.common.makeLinks
+import io.anyline.tiretread.demo.databinding.ActivitySettingsBinding
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.BuildConfig
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
@@ -25,67 +22,104 @@ import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySettingsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        loadUserSettings(PreferencesUtils.loadDefaultSharedPreferences(this))
-        displayHowToGetLicenseInfo()
-        displayAppInfo()
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setUpUi()
     }
 
-    fun onClickedBtnOk(view: View) {
-        saveUserSettings()
-        finish()
+    private fun setUpUi() {
+        val sharedPref = PreferencesUtils.loadDefaultSharedPreferences(this)
+
+        binding.cbSettingsImperialSystem.isChecked =
+            sharedPref.getBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, false)
+
+        binding.etSettingsLicenseKey.setText(
+            sharedPref.getString(
+                PreferencesUtils.KEY_LICENSE_KEY, ""
+            )
+        )
+
+        binding.tvSettingsDeviceName.text = StringUtils.capitalize(HardwareInfo.getDeviceName())
+
+        binding.tvSettingsVersion.text = getString(
+            R.string.settings_screen_versions,
+            AppInfo.appVersionStr,
+            BuildConfig.VERSION_NAME_ANYLINE_TTD_SDK,
+            HardwareInfo.androidApiLevel.toString()
+        )
+
+        binding.tvHowToLicenseKey.makeLinks("presales@anyline.com")
+
+        setUpScanSpeedTextView()
+        setUpButtons()
     }
 
-    /**
-     * Initializes the SDK and informs the user
-     */
-    fun onClickedBtnInitializeSDK(view: View) {
-        val newLicenseKey = (findViewById<EditText>(R.id.etSettingsLicenseKey)).text.toString()
-        try {
-            AnylineTireTreadSdk.init(newLicenseKey, this)
-            Toast.makeText(this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT).show()
-        } catch (e: SdkLicenseKeyInvalidException){
-            Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(this,
-                getString(R.string.txt_error_setup_failure_license_key),
-                Toast.LENGTH_LONG).show()
-        } catch (e: SdkInitializeFailedException){
-            Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(this,
-                getString(R.string.txt_error_setup_failure),
-                Toast.LENGTH_LONG).show()
+    private fun setUpScanSpeedTextView() {
+        val isFastSpeedEnabled = PreferencesUtils.isFastScanSpeedSet(this)
+        updateScanSpeedTextViewText(isFastSpeedEnabled)
+    }
+
+    private fun openBottomSheet(isFastScanModeEnabled: Boolean) {
+        CustomBottomSheet(
+            "Select scan speed",
+            listOf(
+                CustomBottomSheet.BottomSheetOption(0, "Fast"),
+                CustomBottomSheet.BottomSheetOption(1, "Slow")
+            ),
+            object : CustomBottomSheet.CustomBottomSheetListener {
+
+                override fun getCurrentSelectedOption(): Int = when (isFastScanModeEnabled) {
+                    true -> 0
+                    false -> 1
+                }
+
+                override fun onCustomBottomOptionSelected(selectedOption: CustomBottomSheet.BottomSheetOption) {
+                    val isFastScanModeEnabled = selectedOption.value == 0
+                    PreferencesUtils.setScanSpeed(this@SettingsActivity, isFastScanModeEnabled)
+                    updateScanSpeedTextViewText(isFastScanModeEnabled)
+                }
+            })
+            .show(supportFragmentManager, "bottom_sheet")
+    }
+
+    private fun updateScanSpeedTextViewText(isFastScanModeEnabled: Boolean) {
+        binding.scanSpeedTextView.apply {
+            val text = if (isFastScanModeEnabled) {
+                getString(R.string.settings_screen_fast)
+            } else {
+                getString(R.string.settings_screen_slow)
+            }
+            this.text = text
+
+            makeLinks(
+                text to View.OnClickListener {
+                    openBottomSheet(isFastScanModeEnabled)
+                }
+            )
         }
     }
 
-    fun onClickedBtnCancel(view: View) {
-        finish()
+    private fun setUpButtons() {
+        binding.btnSettingsOk.setOnClickListener {
+            saveUserSettings()
+            finish()
+        }
+
+        binding.btnInitializeSDK.setOnClickListener {
+            initialiseSdk()
+        }
+
+        binding.btnSettingsCancel.setOnClickListener {
+            finish()
+        }
     }
 
-    private fun loadUserSettings(sharedPref: SharedPreferences) {
-        val saveMeasurementData = sharedPref.getBoolean(PreferencesUtils.KEY_MEASUREMENT_DATA, false)
-        findViewById<CheckBox>(R.id.cbSettingsSaveMeasurementData).isChecked = saveMeasurementData
-
-        val useImperialSystem = sharedPref.getBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, false)
-        findViewById<CheckBox>(R.id.cbSettingsImperialSystem).isChecked = useImperialSystem
-
-        val licenseKey = sharedPref.getString(PreferencesUtils.KEY_LICENSE_KEY, "")
-        findViewById<EditText>(R.id.etSettingsLicenseKey).setText(licenseKey)
-
-        val measurementQualityHighSpeed = sharedPref.getBoolean(PreferencesUtils.KEY_MEASUREMENT_QUALITY_HIGH_SPEED, false)
-        findViewById<Switch>(R.id.swSettingsMeasurementQuality).isChecked = measurementQualityHighSpeed
-    }
-
-    /**
-     * Save the user's settings to the SharedPreferences.
-     */
     private fun saveUserSettings() {
-        val editor = PreferencesUtils.loadDefaultSharedPreferences (this).edit()
-
-        val saveMeasurementData = findViewById<CheckBox>(R.id.cbSettingsSaveMeasurementData).isChecked
-        editor.putBoolean(PreferencesUtils.KEY_MEASUREMENT_DATA, saveMeasurementData)
+        val editor = PreferencesUtils.loadDefaultSharedPreferences(this).edit()
 
         val useImperialSystem = findViewById<CheckBox>(R.id.cbSettingsImperialSystem).isChecked
         editor.putBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, useImperialSystem)
@@ -93,52 +127,24 @@ class SettingsActivity : AppCompatActivity() {
         val licenseKey = findViewById<EditText>(R.id.etSettingsLicenseKey).text.toString()
         editor.putString(PreferencesUtils.KEY_LICENSE_KEY, licenseKey)
 
-        val measurementQualityHighSpeed = findViewById<Switch>(R.id.swSettingsMeasurementQuality).isChecked
-        editor.putBoolean(PreferencesUtils.KEY_MEASUREMENT_QUALITY_HIGH_SPEED, measurementQualityHighSpeed)
-
         editor.apply()
     }
 
-    /**
-     * Show instruction for getting a License Key
-     */
-    private fun displayHowToGetLicenseInfo() {
-        val colorPrimary = ForegroundColorSpan(ContextCompat.getColor(baseContext, R.color.primary))
-
-        val s1 = SpannableString(getString(R.string.txt_settings_howto_license_key_email))
-        s1.setSpan(
-            URLSpan("mailto:" + getString(R.string.txt_settings_howto_license_key_email)),
-            0,
-            s1.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        s1.setSpan(colorPrimary, 0, s1.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        val builder = SpannableStringBuilder()
-        builder.append(getString(R.string.txt_settings_howto_license_key) + " ")
-        builder.append(s1)
-        builder.append(".")
-
-        val tvHowToLicenseKey = findViewById<TextView>(R.id.tvHowToLicenseKey)
-        tvHowToLicenseKey.text = builder
-        tvHowToLicenseKey.movementMethod = LinkMovementMethod.getInstance()
+    private fun initialiseSdk() {
+        val newLicenseKey = (findViewById<EditText>(R.id.etSettingsLicenseKey)).text.toString()
+        try {
+            AnylineTireTreadSdk.init(newLicenseKey, this)
+            Toast.makeText(this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT).show()
+        } catch (e: SdkLicenseKeyInvalidException) {
+            Log.e("SettingsActivity", e.message, e)
+            Toast.makeText(
+                this, getString(R.string.txt_error_setup_failure_license_key), Toast.LENGTH_LONG
+            ).show()
+        } catch (e: SdkInitializeFailedException) {
+            Log.e("SettingsActivity", e.message, e)
+            Toast.makeText(
+                this, getString(R.string.txt_error_setup_failure), Toast.LENGTH_LONG
+            ).show()
+        }
     }
-
-    /**
-     * Show the app's metadata
-     */
-    private fun displayAppInfo() {
-        val appVersion: String = AppInfo.appVersionStr
-        val sdkVersion: String = BuildConfig.VERSION_NAME_ANYLINE_TTD_SDK
-        val androidApiLevel: Int = HardwareInfo.androidApiLevel
-
-        val versions = String.format(
-            "App: %s - SDK: %s - Android API: %s", appVersion, sdkVersion, androidApiLevel
-        )
-        findViewById<TextView>(R.id.tvSettingsVersion).text = versions
-
-        val deviceName = StringUtils.capitalize(HardwareInfo.getDeviceName())
-        findViewById<TextView>(R.id.tvSettingsDeviceName).text = deviceName
-    }
-
 }

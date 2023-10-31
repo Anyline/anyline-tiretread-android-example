@@ -13,18 +13,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.sdk.*
 import io.anyline.tiretread.sdk.types.TreadDepthResult
 import io.anyline.tiretread.sdk.types.TreadResultRegion
-import io.anyline.tiretread.sdk.utils.inchStringToTriple
-import io.anyline.tiretread.sdk.utils.inchToFractionString
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.encodeToString
-import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 
 class MeasurementResultActivity : AppCompatActivity() {
@@ -57,7 +52,7 @@ class MeasurementResultActivity : AppCompatActivity() {
                     }
                 )
 
-            if (measurementFailed){
+            if (measurementFailed) {
                 Log.d("SHOWCASE", "run: Error... cancel the loop now")
                 Log.d("SHOWCASE", "UUID: $measurementUuid")
                 resultTimer.cancel()
@@ -67,8 +62,7 @@ class MeasurementResultActivity : AppCompatActivity() {
                         "Make sure you do not move the device too fast and keep the right distance."
                     )
                 }
-            }
-            else if (measurementResult != null) {
+            } else if (measurementResult != null) {
                 Log.d("SHOWCASE", "run: Result not null... cancel the loop now")
                 Log.d("SHOWCASE", "UUID: $measurementUuid")
                 resultTimer.cancel()
@@ -140,25 +134,34 @@ class MeasurementResultActivity : AppCompatActivity() {
 
         findViewById<LinearLayout>(R.id.llMeasurementResults).visibility = View.VISIBLE
 
-        findViewById<LinearLayout>(R.id.llResultGlobal).background =
-            ContextCompat.getDrawable(
-                this,
-                getResultBackgroundDrawable(measurementResult.global.valueMm)
-            )
+        val llResultGlobal = findViewById<LinearLayout>(R.id.llResultGlobal)
 
         // Display the Global Result
         if (PreferencesUtils.shouldUseImperialSystem(this)) {
+
+            val globalResultInch32nds = measurementResult.global.valueInch32nds
+
+            // Display the background green/yellow/red according to the Tread Depth
+            llResultGlobal.background = ContextCompat.getDrawable(
+                this,
+                getResultBackgroundDrawable(globalResultInch32nds)
+            )
+
             findViewById<View>(R.id.dividerLineInches).visibility = View.VISIBLE
 
-            val (_, nominator, denominator) =
-                inchStringToTriple(inchToFractionString(measurementResult.global.valueInch))
-
-            findViewById<TextView>(R.id.tvResultInchGlobal).text = "$nominator"
-            val stringDenominator = "$denominator\"" // 32"
-            findViewById<TextView>(R.id.tvDenominatorGlobal).text = stringDenominator
+            findViewById<TextView>(R.id.tvResultInch32ndsGlobal).text =
+                globalResultInch32nds.toString()
+            findViewById<TextView>(R.id.tvDenominatorGlobal).visibility = View.VISIBLE
         } else {
+            val globalResultMillimeter = measurementResult.global.valueMm
+            // Display the background green/yellow/red according to the Tread Depth
+            llResultGlobal.background = ContextCompat.getDrawable(
+                this,
+                getResultBackgroundDrawable(globalResultMillimeter)
+            )
+
             val tvResultGlobal = findViewById<TextView>(R.id.tvResultGlobal)
-            val globalString = String.format("%.1f", measurementResult.global.valueMm) + "\nmm"
+            val globalString = String.format("%.1f", globalResultMillimeter) + "\nmm"
             tvResultGlobal.text = globalString
         }
 
@@ -195,24 +198,26 @@ class MeasurementResultActivity : AppCompatActivity() {
         val regionResultFragment =
             layoutInflater.inflate(R.layout.fragment_region_result, null, false)
 
-        val llRegionResult = regionResultFragment.findViewById<LinearLayout>(R.id.llRegionResult)
-        llRegionResult.background =
-            ContextCompat.getDrawable(this, getResultBackgroundDrawable(region.valueMm))
+        val llRegionResult =
+            regionResultFragment.findViewById<LinearLayout>(R.id.llRegionResult)
 
         if (PreferencesUtils.shouldUseImperialSystem(this)) {
+            llRegionResult.background =
+                ContextCompat.getDrawable(this, getResultBackgroundDrawable(region.valueInch32nds))
+
             regionResultFragment.findViewById<View>(R.id.dividerLineInches).visibility =
                 View.VISIBLE
 
-            val (_, nominator, denominator) =
-                inchStringToTriple(inchToFractionString(region.valueInch))
-
-            regionResultFragment.findViewById<TextView>(R.id.tvResultNominatorInch).text =
-                "$nominator"
-            val denominatorString = "$denominator\""
-            regionResultFragment.findViewById<TextView>(R.id.tvResultDenominatorInch).text =
-                denominatorString
+            regionResultFragment.findViewById<TextView>(R.id.tvResult32ndsInch).text =
+                region.valueInch32nds.toString()
+            regionResultFragment
+                .findViewById<TextView>(R.id.tvRegionResultDenominatorInch).visibility =
+                View.VISIBLE
         } else {
-            regionResultFragment.findViewById<TextView>(R.id.tvRegionResult).text =
+            llRegionResult.background =
+                ContextCompat.getDrawable(this, getResultBackgroundDrawable(region.valueMm))
+
+            regionResultFragment.findViewById<TextView>(R.id.tvRegionResultMillimeter).text =
                 String.format("%.1f", region.valueMm) + "\nmm"
         }
         return regionResultFragment
@@ -222,7 +227,8 @@ class MeasurementResultActivity : AppCompatActivity() {
         val regionResultFragment =
             layoutInflater.inflate(R.layout.fragment_region_result, null, false)
 
-        val tvRegionResult = regionResultFragment.findViewById<TextView>(R.id.tvRegionResult)
+        val tvRegionResult =
+            regionResultFragment.findViewById<TextView>(R.id.tvRegionResultMillimeter)
 
         tvRegionResult.text = "-"
         tvRegionResult.background = ContextCompat.getDrawable(this, R.drawable.result_gray)
@@ -258,41 +264,7 @@ class MeasurementResultActivity : AppCompatActivity() {
             return
         }
 
-        Toast.makeText(this, "Will open the PDF report", Toast.LENGTH_SHORT).show()
-
-        val reportURL = AnylineTireTreadSdk.getTreadDepthReportUrlString(uuid)
-
-        if (reportURL.isNotBlank()) {
-            try {
-                val data = AnylineTireTreadSdk.getTreadDepthReportPdf(uuid)
-                // Create a temporary file
-                val tmpPdfFile = File.createTempFile("tit_report-", ".pdf")
-
-                // Write the PDF data into it
-                val fos = FileOutputStream(tmpPdfFile)
-                fos.write(data)
-                fos.close()
-
-                // Prepare to show
-                val browserIntent = Intent(Intent.ACTION_VIEW)
-                val uri = FileProvider.getUriForFile(
-                    applicationContext,
-                    "$packageName.provider",
-                    tmpPdfFile
-                )
-                browserIntent.setDataAndType(uri, "application/pdf")
-                browserIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                val chooser = Intent.createChooser(browserIntent, "Open with")
-                chooser.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-                startActivity(chooser)
-            } catch (e: Exception) {
-                Log.e("SHOWCASE", "onClickedBtnReport: ", e)
-            }
-        } else {
-            Toast.makeText(this, "The Detailed report is not available", Toast.LENGTH_LONG).show()
-        }
+        startActivity(MeasurementResultDetailsActivity.newIntent(this, uuid))
     }
 
     fun finishActivity(view: View) {
@@ -303,10 +275,20 @@ class MeasurementResultActivity : AppCompatActivity() {
         finishAndRemoveTask()
     }
 
-    private fun getResultBackgroundDrawable(value: Double): Int {
-        return if (value >= 4f) {
+    private fun getResultBackgroundDrawable(valueMillimeter: Double): Int {
+        return if (valueMillimeter >= 4f) {
             R.drawable.result_green
-        } else if (value <= 3f) {
+        } else if (valueMillimeter <= 3f) {
+            R.drawable.result_red
+        } else {
+            R.drawable.result_yellow
+        }
+    }
+
+    private fun getResultBackgroundDrawable(valueInch32nds: Int): Int {
+        return if (valueInch32nds > 5) {
+            R.drawable.result_green
+        } else if (valueInch32nds <= 3) {
             R.drawable.result_red
         } else {
             R.drawable.result_yellow

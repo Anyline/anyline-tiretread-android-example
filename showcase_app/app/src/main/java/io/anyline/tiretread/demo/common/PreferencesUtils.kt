@@ -10,7 +10,9 @@ object PreferencesUtils {
     const val KEY_MEASUREMENT_DATA = "measurement_data"
     const val KEY_IMPERIAL_SYSTEM = "imperial_system"
     const val KEY_LICENSE_KEY = "license_key"
+    private const val KEY_TUTORIAL_SHOWN = "tutorial_shown"
     const val KEY_MEASUREMENT_QUALITY_HIGH_SPEED = "measurement_quality_high_speed"
+    private const val KEY_SCAN_SPEED = "KEY_SCAN_SPEED"
 
     /**
      * Load the default SharedPreferences.
@@ -30,7 +32,7 @@ object PreferencesUtils {
     fun getLicenseKey(context: Context): String? {
         return try {
             loadDefaultSharedPreferences(context).getString(KEY_LICENSE_KEY, "")
-        } catch (e: java.lang.ClassCastException){
+        } catch (e: java.lang.ClassCastException) {
             "";
         }
     }
@@ -41,6 +43,21 @@ object PreferencesUtils {
      */
     fun shouldUseImperialSystem(context: Context): Boolean {
         return loadDefaultSharedPreferences(context).getBoolean(KEY_IMPERIAL_SYSTEM, false)
+    }
 
+    fun shouldShowTutorial(context: Context): Boolean {
+        return loadDefaultSharedPreferences(context).getBoolean(KEY_TUTORIAL_SHOWN, false)
+    }
+
+    fun onTutorialShown(context: Context) {
+        loadDefaultSharedPreferences(context).edit().putBoolean(KEY_TUTORIAL_SHOWN, true).apply()
+    }
+
+    fun setScanSpeed(context: Context, isFast: Boolean) {
+        loadDefaultSharedPreferences(context).edit().putBoolean(KEY_SCAN_SPEED, isFast).apply()
+    }
+
+    fun isFastScanSpeedSet(context: Context): Boolean {
+        return loadDefaultSharedPreferences(context).getBoolean(KEY_SCAN_SPEED, true)
     }
 }

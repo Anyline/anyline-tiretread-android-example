@@ -5,29 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.TireApp"
-    tools:context="io.anyline.tiretread.demo.activities.MainActivity">
-
-    <Button
-        android:id="@+id/btnMain_start"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/rounded_button"
-        android:text="@string/btn_start"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="TextSizeCheck" />
-
-    <Button
-        android:id="@+id/btnMain_tutorial"
-        android:layout_width="125dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/rounded_button"
-        android:text="@string/btn_tutorial"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnMain_start"
-        tools:ignore="TextSizeCheck" />
+    tools:context="io.anyline.tiretread.demo.activities.TutorialActivity">
 
     <LinearLayout
         android:id="@+id/linearHeader"
@@ -104,65 +82,31 @@
         </LinearLayout>
     </LinearLayout>
 
+    <WebView
+        android:id="@+id/web_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnMain_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearHeader" />
+
     <Button
-        android:id="@+id/btnMain_settings"
+        android:id="@+id/btnMain_cancel"
         android:layout_width="125dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/rounded_button"
         android:backgroundTint="@color/primary_anyline"
+        android:onClick="onClickedButtonCancel"
         android:scaleType="center"
-        android:text="@string/btn_settings"
+        android:text="@string/btn_cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="TextSizeCheck" />
-
-    <TextView
-        android:id="@+id/tvWelcomeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/proxima_nova_bold"
-        android:paddingLeft="20dp"
-        android:paddingTop="20dp"
-        android:text="@string/txt_main_screen_welcome_title"
-        android:textColor="@color/primary"
-        android:textSize="45sp"
-        app:layout_constraintStart_toStartOf="@id/linearHeader"
-        app:layout_constraintTop_toBottomOf="@+id/linearHeader" />
-
-    <TextView
-        android:id="@+id/tutorial_info_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/proxima_nova_bold"
-        android:paddingLeft="20dp"
-        android:paddingTop="20dp"
-        android:text="@string/txt_main_tutorial_info_text"
-        android:textSize="24dp"
-        app:layout_constraintStart_toStartOf="@id/tvWelcomeTitle"
-        app:layout_constraintTop_toBottomOf="@+id/tvWelcomeTitle" />
-
-    <TextView
-        android:id="@+id/tvWelcomeMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/proxima_nova_light"
-        android:paddingLeft="20dp"
-        android:text="@string/txt_main_start_scanning_info_text"
-        android:textSize="24dp"
-        app:layout_constraintStart_toStartOf="@id/tvWelcomeTitle"
-        app:layout_constraintTop_toBottomOf="@+id/tutorial_info_text_view" />
-
-    <TextView
-        android:id="@+id/tvWelcomeDocumentation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:fontFamily="@font/proxima_nova_light"
-        android:paddingStart="20dp"
-        android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

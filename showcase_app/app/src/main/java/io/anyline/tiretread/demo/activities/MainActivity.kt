@@ -16,7 +16,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -25,72 +24,108 @@ import androidx.core.content.res.ResourcesCompat
 import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.CustomTypefaceSpan
 import io.anyline.tiretread.demo.common.PreferencesUtils
+import io.anyline.tiretread.demo.common.makeLinks
+import io.anyline.tiretread.demo.databinding.ActivityMainBinding
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
 import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
-import io.anyline.tiretread.sdk.utils.isValidUuid
 
 private const val CAMERA_REQUEST_CODE = 200
 
 class MainActivity : AppCompatActivity() {
-    private var shouldOpenScanActivity : Boolean = false
+    private var shouldOpenScanActivity: Boolean = false
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        if(!isCameraPermissionGranted()){
+        if (!isCameraPermissionGranted()) {
             requestCameraPermission(false)
         }
+
+        binding.btnMainStart.setOnClickListener {
+            startScanning()
+        }
+
+        binding.btnMainTutorial.setOnClickListener {
+            goToTutorialScreen()
+        }
+
+        binding.btnMainSettings.setOnClickListener {
+            goToSettingsScreen()
+        }
+
+        binding.tutorialInfoTextView.makeLinks(Pair("TUTORIAL", object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                goToTutorialScreen()
+            }
+        }))
+
+        binding.tvWelcomeMessage.makeLinks(Pair("OPEN SCANNER", object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                startScanning()
+            }
+        }))
 
         displayWelcomeMessages()
     }
 
-    /**
-     * Open Scan Activity
-     */
-    fun onClickedBtnStart(view: View) {
-        if(!isCameraPermissionGranted()){
-            requestCameraPermission(true)
-            return
-        }
-        if(initializeAnylineTiretreadSdk()){
-            openScanActivity()
+    private fun startScanning() {
+        if (!PreferencesUtils.shouldShowTutorial(this)) {
+            goToTutorialScreen()
+        } else {
+            if (!isCameraPermissionGranted()) {
+                requestCameraPermission(true)
+                return
+            }
+            if (initializeAnylineTireTreadSdk()) {
+                openScanActivity()
+            }
         }
     }
 
-    private fun initializeAnylineTiretreadSdk() : Boolean {
+    fun goToTutorialScreen() {
+        val intent = Intent(this, TutorialActivity::class.java)
+        startActivity(intent)
+    }
 
-        val licenseKey : String = PreferencesUtils.getLicenseKey(this) ?: ""
+    private fun initializeAnylineTireTreadSdk(): Boolean {
+
+        val licenseKey: String = PreferencesUtils.getLicenseKey(this) ?: ""
 
         // Initialize the SDK
         try {
             AnylineTireTreadSdk.init(licenseKey, this)
             Log.i("Init SDK", "Success")
             return true
-        } catch (e: SdkLicenseKeyInvalidException){
+        } catch (e: SdkLicenseKeyInvalidException) {
             Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(this,
-                getString(R.string.txt_error_setup_failure_license_key),
-                Toast.LENGTH_LONG).show()
-        } catch (e: SdkInitializeFailedException){
+            Toast.makeText(
+                this, getString(R.string.txt_error_setup_failure_license_key), Toast.LENGTH_LONG
+            ).show()
+        } catch (e: SdkInitializeFailedException) {
             Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(this,
-                getString(R.string.txt_error_setup_failure),
-                Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this, getString(R.string.txt_error_setup_failure), Toast.LENGTH_LONG
+            ).show()
         }
         return false
     }
 
     private fun requestCameraPermission(shouldOpenScanActivity: Boolean) {
         this.shouldOpenScanActivity = shouldOpenScanActivity
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE
+        )
     }
 
     /**
      * Open the Scan Activity
      */
-    private fun openScanActivity(){
+    private fun openScanActivity() {
         val intent = Intent(this, ScanActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         startActivity(intent)
@@ -99,31 +134,13 @@ class MainActivity : AppCompatActivity() {
     /**
      * Open the Settings Activity
      */
-    fun onClickedBtnSettings(view: View) {
+    fun goToSettingsScreen() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
     private fun displayWelcomeMessages() {
         val fontLight = ResourcesCompat.getFont(baseContext, R.font.proxima_nova_light)
-        val fontBold = ResourcesCompat.getFont(baseContext, R.font.proxima_nova_bold)
-        val colorPrimary = ForegroundColorSpan(ContextCompat.getColor(baseContext, R.color.primary))
-
-        val s1 = SpannableString(getString(R.string.txt_main_to_start_scanning_press_the) + " ")
-        val s2 = SpannableString(getString(R.string.btn_start_uc) + " ")
-        val s3 = SpannableString(getString(R.string.txt_main_button_dot))
-
-        s1.setSpan(CustomTypefaceSpan(fontLight), 0, s1.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        s2.setSpan(CustomTypefaceSpan(fontBold), 0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        s2.setSpan(colorPrimary,0, s2.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        s3.setSpan(CustomTypefaceSpan(fontLight), 0, s3.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        val builderMessage = SpannableStringBuilder()
-        builderMessage.append(s1)
-        builderMessage.append(s2)
-        builderMessage.append(s3)
-
-        findViewById<TextView>(R.id.tvWelcomeMessage).text = builderMessage
 
         val s4 =
             SpannableString(getString(R.string.txt_main_for_best_scanning_practices_please_go_to) + " ")
@@ -142,15 +159,16 @@ class MainActivity : AppCompatActivity() {
         builderDoc.append(s4)
         builderDoc.append(s5)
 
-        val welcomeDocumentation = findViewById<TextView>(R.id.tvWelcomeDocumentation)
-        welcomeDocumentation.text = builderDoc
-        welcomeDocumentation.movementMethod = LinkMovementMethod.getInstance()
+        binding.tvWelcomeDocumentation.apply {
+            text = builderDoc
+            movementMethod = LinkMovementMethod.getInstance()
+        }
     }
 
     /**
      * Check if the Camera Permission is already granted.
      */
-    private fun isCameraPermissionGranted() : Boolean {
+    private fun isCameraPermissionGranted(): Boolean {
         val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         return permission == PackageManager.PERMISSION_GRANTED
     }
@@ -160,41 +178,37 @@ class MainActivity : AppCompatActivity() {
      * Calls openScanActivity() if 'shouldOpenScanActivity' is 'true'.
      */
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-            if(requestCode != CAMERA_REQUEST_CODE) { return }
-            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                if (this.shouldOpenScanActivity){
-                    openScanActivity()
-                }
-            } else {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_DENIED) {
-                    showDialogOKCancel("To be able to scan, provide the camera permission.") {
-                        _, which ->
-                        if (which == DialogInterface.BUTTON_POSITIVE){
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            intent.data = Uri.fromParts("package", packageName, null)
-                            startActivity(intent)
-                        }
-                        else {
-                            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
-                        }
+        if (requestCode != CAMERA_REQUEST_CODE) {
+            return
+        }
+        if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            if (this.shouldOpenScanActivity) {
+                openScanActivity()
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_DENIED
+            ) {
+                showDialogOKCancel("To be able to scan, provide the camera permission.") { _, which ->
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        val intent = Intent()
+                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        intent.data = Uri.fromParts("package", packageName, null)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+        }
     }
 
     private fun showDialogOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-        android.app.AlertDialog.Builder(this)
-            .setMessage(message)
-            .setPositiveButton("OK", okListener)
-            .setNegativeButton("Cancel", null)
-            .create()
-            .show()
+        android.app.AlertDialog.Builder(this).setMessage(message)
+            .setPositiveButton("OK", okListener).setNegativeButton("Cancel", null).create().show()
     }
 }

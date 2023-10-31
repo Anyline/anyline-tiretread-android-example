@@ -2,10 +2,11 @@
 <resources>
 
     <!--Button-->
-    <string name="btn_start">Start</string>
+    <string name="btn_start">Open Scanner</string>
+    <string name="btn_tutorial">Tutorial</string>
     <string name="btn_settings">Settings</string>
     <string name="btn_testing">API TEST</string>
-    <string name="btn_start_capture">Start Capture</string>
+    <string name="btn_start_capture">Start</string>
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_submit">Submit</string>
@@ -14,13 +15,13 @@
     <string name="btn_details">Details</string>
     <string name="btn_abort">Abort</string>
     <string name="btn_initialize_sdk">Test Setup</string>
-
     <string name="btn_start_uc">START</string>
+    <string name="btn_download">DOWNLOAD</string>
 
     <!--Text(View)-->
     <string name="txt_main_screen_welcome_title">Welcome to the Anyline \nTire Tread Scanner!</string>
-    <string name="txt_main_to_start_scanning_press_the">To start scanning, press the</string>
-    <string name="txt_main_button_dot">button.</string>
+    <string name="txt_main_tutorial_info_text">Watch the TUTORIAL to learn how to scan.</string>
+    <string name="txt_main_start_scanning_info_text">To start scanning, press the OPEN SCANNER button.</string>
     <string name="txt_main_for_best_scanning_practices_please_go_to">For best scanning practices, please go to</string>
     <string name="txt_main_tire_tread_docu_anyline_com">tiretreaddocu.anyline.com</string>
     <string name="txt_header_tire_tread">Tire Tread</string>
@@ -39,8 +40,7 @@
     <string name="txt_comment_failed">Comment was not saved.</string>
     <string name="txt_settings_save_data">Save Measurement Data:</string>
     <string name="txt_settings_measurement_system">Use Imperial System:</string>
-    <string name="txt_settings_howto_license_key">If you need a license please reach out to</string>
-    <string name="txt_settings_howto_license_key_email">presales@anyline.com</string>
+    <string name="txt_settings_howto_license_key">If you need a license please reach out to presales@anyline.com</string>
     <string name="txt_license_key">License Key:</string>
     <string name="txt_settings_measurement_mode">Accuracy / Speed:</string>
     <string name="txt_settings">Settings</string>
@@ -71,5 +71,11 @@
 
     <!-- Uploading Indicator -->
     <string name="uploading">Uploading…</string>
+
+    <!-- Settings screen -->
+    <string name="settings_screen_versions">App: %1$s - SDK: %2$s - Android API: %3$s</string>
+    <string name="settings_screen_slow">Slow (tap to change)</string>
+    <string name="settings_screen_fast">Fast (tap to change)</string>
+    <string name="settings_screen_scan_speed_label">Scan speed:</string>
 
 </resources>
