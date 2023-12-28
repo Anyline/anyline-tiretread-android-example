@@ -200,10 +200,21 @@
                 android:inputType="text"
                 android:textColor="@color/textColor"
                 android:textSize="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/scan_barcode_button"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
                 app:layout_constraintTop_toBottomOf="@id/cbSettingsImperialSystem" />
+
+            <ImageView
+                android:id="@+id/scan_barcode_button"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="48dp"
+                android:src="@drawable/ic_scan_qr_code"
+                app:layout_constraintBottom_toBottomOf="@id/etSettingsLicenseKey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/etSettingsLicenseKey"
+                app:layout_constraintTop_toTopOf="@id/etSettingsLicenseKey" />
 
             <TextView
                 android:id="@+id/tvHowToLicenseKey"

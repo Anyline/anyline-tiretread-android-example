@@ -14,7 +14,6 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,9 +25,6 @@ import io.anyline.tiretread.demo.common.CustomTypefaceSpan
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.common.makeLinks
 import io.anyline.tiretread.demo.databinding.ActivityMainBinding
-import io.anyline.tiretread.sdk.AnylineTireTreadSdk
-import io.anyline.tiretread.sdk.SdkInitializeFailedException
-import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
 
 private const val CAMERA_REQUEST_CODE = 200
 
@@ -93,26 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeAnylineTireTreadSdk(): Boolean {
-
-        val licenseKey: String = PreferencesUtils.getLicenseKey(this) ?: ""
-
-        // Initialize the SDK
-        try {
-            AnylineTireTreadSdk.init(licenseKey, this)
-            Log.i("Init SDK", "Success")
-            return true
-        } catch (e: SdkLicenseKeyInvalidException) {
-            Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(
-                this, getString(R.string.txt_error_setup_failure_license_key), Toast.LENGTH_LONG
-            ).show()
-        } catch (e: SdkInitializeFailedException) {
-            Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(
-                this, getString(R.string.txt_error_setup_failure), Toast.LENGTH_LONG
-            ).show()
-        }
-        return false
+        return TireTreadSdkInitializer.initSdk(this, PreferencesUtils.getLicenseKey(this) ?: "")
     }
 
     private fun requestCameraPermission(shouldOpenScanActivity: Boolean) {

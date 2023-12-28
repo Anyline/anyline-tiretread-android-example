@@ -1,11 +1,13 @@
 package io.anyline.tiretread.demo.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import io.anyline.tiretread.demo.AppInfo
 import io.anyline.tiretread.demo.CustomBottomSheet
@@ -15,20 +17,33 @@ import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.common.StringUtils
 import io.anyline.tiretread.demo.common.makeLinks
 import io.anyline.tiretread.demo.databinding.ActivitySettingsBinding
-import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.BuildConfig
-import io.anyline.tiretread.sdk.SdkInitializeFailedException
-import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
+
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpUi()
+
+        activityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                result.data?.getStringExtra(ScanBarcodeActivity.EXTRA_BARCODE_RESULT)?.let {
+                    binding.etSettingsLicenseKey.setText(it)
+                }
+            } else if (result.resultCode == RESULT_CANCELED) {
+                Toast.makeText(
+                    this, "Barcode scanning was cancelled. No license key found!", Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     private fun setUpUi() {
@@ -54,6 +69,10 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.tvHowToLicenseKey.makeLinks("presales@anyline.com")
 
+        binding.scanBarcodeButton.setOnClickListener {
+            activityResultLauncher.launch(ScanBarcodeActivity.newIntent(this))
+        }
+
         setUpScanSpeedTextView()
         setUpButtons()
     }
@@ -64,26 +83,22 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun openBottomSheet(isFastScanModeEnabled: Boolean) {
-        CustomBottomSheet(
-            "Select scan speed",
-            listOf(
-                CustomBottomSheet.BottomSheetOption(0, "Fast"),
-                CustomBottomSheet.BottomSheetOption(1, "Slow")
-            ),
-            object : CustomBottomSheet.CustomBottomSheetListener {
+        CustomBottomSheet("Select scan speed", listOf(
+            CustomBottomSheet.BottomSheetOption(0, "Fast"),
+            CustomBottomSheet.BottomSheetOption(1, "Slow")
+        ), object : CustomBottomSheet.CustomBottomSheetListener {
 
-                override fun getCurrentSelectedOption(): Int = when (isFastScanModeEnabled) {
-                    true -> 0
-                    false -> 1
-                }
+            override fun getCurrentSelectedOption(): Int = when (isFastScanModeEnabled) {
+                true -> 0
+                false -> 1
+            }
 
-                override fun onCustomBottomOptionSelected(selectedOption: CustomBottomSheet.BottomSheetOption) {
-                    val isFastScanModeEnabled = selectedOption.value == 0
-                    PreferencesUtils.setScanSpeed(this@SettingsActivity, isFastScanModeEnabled)
-                    updateScanSpeedTextViewText(isFastScanModeEnabled)
-                }
-            })
-            .show(supportFragmentManager, "bottom_sheet")
+            override fun onCustomBottomOptionSelected(selectedOption: CustomBottomSheet.BottomSheetOption) {
+                val isFastScanModeEnabled = selectedOption.value == 0
+                PreferencesUtils.setScanSpeed(this@SettingsActivity, isFastScanModeEnabled)
+                updateScanSpeedTextViewText(isFastScanModeEnabled)
+            }
+        }).show(supportFragmentManager, "bottom_sheet")
     }
 
     private fun updateScanSpeedTextViewText(isFastScanModeEnabled: Boolean) {
@@ -95,11 +110,9 @@ class SettingsActivity : AppCompatActivity() {
             }
             this.text = text
 
-            makeLinks(
-                text to View.OnClickListener {
-                    openBottomSheet(isFastScanModeEnabled)
-                }
-            )
+            makeLinks(text to View.OnClickListener {
+                openBottomSheet(isFastScanModeEnabled)
+            })
         }
     }
 
@@ -132,19 +145,14 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun initialiseSdk() {
         val newLicenseKey = (findViewById<EditText>(R.id.etSettingsLicenseKey)).text.toString()
-        try {
-            AnylineTireTreadSdk.init(newLicenseKey, this)
-            Toast.makeText(this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT).show()
-        } catch (e: SdkLicenseKeyInvalidException) {
-            Log.e("SettingsActivity", e.message, e)
+        TireTreadSdkInitializer.initSdk(this, newLicenseKey) {
             Toast.makeText(
-                this, getString(R.string.txt_error_setup_failure_license_key), Toast.LENGTH_LONG
-            ).show()
-        } catch (e: SdkInitializeFailedException) {
-            Log.e("SettingsActivity", e.message, e)
-            Toast.makeText(
-                this, getString(R.string.txt_error_setup_failure), Toast.LENGTH_LONG
+                this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    companion object {
+        private const val REQUEST_CODE_SCAN_BARCODE = 1000
     }
 }

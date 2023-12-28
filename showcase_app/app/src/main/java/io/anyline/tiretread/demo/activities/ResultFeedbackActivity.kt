@@ -19,7 +19,6 @@ import io.anyline.tiretread.sdk.sendTreadDepthResultFeedback
 import io.anyline.tiretread.sdk.types.TreadDepthResult
 import io.anyline.tiretread.sdk.types.TreadResultRegion
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -123,13 +122,11 @@ class ResultFeedbackActivity : Activity() {
             if (useImperial) {
                 TreadResultRegion.initInch(
                     it.text.isNotEmpty(),
-                    region.confidence,
                     it.text.toString().toDoubleOrNull() ?: 0.0
                 )
             } else {
                 TreadResultRegion.initMm(
                     it.text.isNotEmpty(),
-                    region.confidence,
                     it.text.toString().toDoubleOrNull() ?: 0.0
                 )
             }

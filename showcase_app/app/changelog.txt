@@ -1,6 +1,24 @@
 CHANGELOG
 
 ----------------------------------------------------------------------------
+
+[5.4.3]
+
+ADDED
+
+- Scan QR code to update license in the license key field
+- Scan QR code to get tire id
+
+CHANGED
+
+- Using default UI from the SDK, including start, stop and abort button and the distance indicator
+- Feedback is given also when the Scanner is opened already out of the correct position
+
+FIXED
+
+- Fix potential issues when stopping the scanner right after starting it
+- Fix scenario where the "scan stop" feedback sound could be played doubled
+
 [5.4.0] - 2023-10-25
 
 ADDED

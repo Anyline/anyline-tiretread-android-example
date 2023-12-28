@@ -2,30 +2,30 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.firebase.appdistribution'
-    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.0"
 }
 
 repositories {
     google()
     jcenter()
     mavenCentral()
-    maven { url "artifactregistry://europe-maven.pkg.dev/anyline-ttr-sdk/maven" }
+    maven { url "https://europe-maven.pkg.dev/anyline-ttr-sdk/release-candidates" }
+    maven { url "https://europe-maven.pkg.dev/anyline-ttr-sdk/maven" }
 }
 
 ext.versionMajor = 5
 ext.versionMinor = 4
-ext.versionPatch = 0
+ext.versionPatch = 3
 ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
 ext.buildNumber = System.getenv("BUILD_NUMBER")
 
 android {
     namespace 'io.anyline.tiretread.demo'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "io.anyline.tiretread.demo"
-        minSdk 21
-        targetSdk 33
+        minSdk 26
+        targetSdk 34
         versionCode generateVersionCode()
         versionName generateVersionName()
 
@@ -39,10 +39,10 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
 
-    applicationVariants.all { variant ->
+    applicationVariants.configureEach { variant ->
         variant.outputs.all {
             def flavor = variant.name
             def versionName = variant.versionName
@@ -86,18 +86,19 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-        coreLibraryDesugaringEnabled true
     }
 }
 
 dependencies {
     // Anyline
-    implementation 'io.anyline.tiretread.sdk:shared:2+'
+    implementation 'io.anyline.tiretread.sdk:shared:3+'
 
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.camera:camera-view:1.3.0'
+    implementation 'androidx.camera:camera-lifecycle:1.3.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -106,12 +107,16 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25'
 
     // Compose
-    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.activity:activity-compose:1.8.1'
+    implementation 'androidx.compose.material3:material3:1.1.2'
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
 
     // PDF Viewer
     implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    // Barcode scanner
+    implementation 'com.google.mlkit:barcode-scanning:17.2.0'
 }
 
 /**

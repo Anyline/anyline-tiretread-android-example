@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.github.barteksc.pdfviewer.util.FitPolicy
 import io.anyline.tiretread.demo.Response
 import io.anyline.tiretread.demo.databinding.ActivityMeasurementResultDetailsBinding
 import java.io.File
@@ -61,6 +60,8 @@ class MeasurementResultDetailsActivity : AppCompatActivity() {
                 is Response.Loading -> {
                     binding.progressBar.visibility = VISIBLE
                 }
+
+                else -> {}
             }
 
         }
@@ -82,6 +83,8 @@ class MeasurementResultDetailsActivity : AppCompatActivity() {
                     binding.progressBar.visibility = GONE
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                 }
+
+                else -> {}
             }
         }
     }
