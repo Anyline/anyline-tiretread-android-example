@@ -138,7 +138,7 @@ class ScanBarcodeActivity : AppCompatActivity() {
                         height = Dimension.matchParent
                         width = Dimension.matchParent
                     }
-                    .background(Colors.WHITE.get()))
+                    .background(Colors.WHITE))
             }
 
             intent.getStringExtra(EXTRA_GUIDANCE_TEXT)?.let {

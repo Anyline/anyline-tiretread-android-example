@@ -1,6 +1,27 @@
 CHANGELOG
 
 ----------------------------------------------------------------------------
+[5.5.0]
+
+CHANGED
+
+- Implemented new default UI
+    - Removed start/stop buttons
+    - Start/Stop scanning on touch
+    - Changed abort button
+    - Added tooltips
+
+[5.4.5]
+
+ADDED
+
+- Vibration Feedback on Start/Stop scanning
+
+[5.4.4]
+
+CHANGED
+
+- Reduce .apk size
 
 [5.4.3]
 

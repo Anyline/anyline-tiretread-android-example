@@ -3,6 +3,7 @@ package io.anyline.tiretread.demo.activities
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.ACTION_UP
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.databinding.ActivityScanBinding
 import io.anyline.tiretread.sdk.scanner.AnylineInternalFeature
+import io.anyline.tiretread.sdk.scanner.DistanceStatus
 import io.anyline.tiretread.sdk.scanner.MeasurementSystem
 import io.anyline.tiretread.sdk.scanner.ScanSpeed
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
@@ -78,9 +80,7 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
     override fun onUploadAborted(uuid: String?) {
         super.onUploadAborted(uuid)
-        mainHandler.post {
-            Toast.makeText(applicationContext, "Upload Aborted", Toast.LENGTH_SHORT).show()
-        }
+        Log.i("Showcase", "Upload Aborted")
         finish()
     }
 
@@ -116,7 +116,15 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
                 if (TireTreadScanner.instance.isScanning) {
                     TireTreadScanner.instance.stopScanning()
                 } else {
-                    TireTreadScanner.instance.startScanning()
+                    if (TireTreadScanner.instance.captureDistanceStatus == DistanceStatus.OK)
+                        TireTreadScanner.instance.startScanning()
+                    else {
+                        Toast.makeText(
+                            this,
+                            "Move the phone to the correct position before starting.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
                 true
             }
