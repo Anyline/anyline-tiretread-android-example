@@ -28,7 +28,7 @@
     <string name="txt_feedback">Feedback</string>
     <string name="txt_feedback_hint">Insert your feedback here…</string>
     <string name="txt_waiting_for_result">Waiting for result...</string>
-    <string name="txt_token">Scan ID:</string>
+    <string name="txt_token">Scan ID: %s</string>
     <string name="txt_tire">Tire</string>
     <string name="txt_feedback_hint_mm">mm</string>
     <string name="txt_feedback_title">Insert manual tread depths</string>

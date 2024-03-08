@@ -1,15 +1,12 @@
 package io.anyline.tiretread.demo.activities
 
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,16 +14,22 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.PreferencesUtils
-import io.anyline.tiretread.sdk.*
+import io.anyline.tiretread.demo.databinding.ActivityMeasurementResultBinding
+import io.anyline.tiretread.sdk.AnylineTireTreadSdk
+import io.anyline.tiretread.sdk.getTreadDepthReportResult
+import io.anyline.tiretread.sdk.getTreadDepthReportUrlString
 import io.anyline.tiretread.sdk.types.MeasurementError
+import io.anyline.tiretread.sdk.types.MeasurementInfo
+import io.anyline.tiretread.sdk.types.MeasurementStatus
 import io.anyline.tiretread.sdk.types.TreadDepthResult
 import io.anyline.tiretread.sdk.types.TreadResultRegion
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.json.DefaultJson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
-import java.util.*
+import java.util.Random
+import kotlin.random.asKotlinRandom
 
 class MeasurementResultActivity(
     private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -34,34 +37,56 @@ class MeasurementResultActivity(
 
     private var measurementUuid: String = ""
     private var currentResult = TreadDepthResult(
-        TreadResultRegion(), listOf(TreadResultRegion())
+        TreadResultRegion(), listOf(TreadResultRegion()),
+        MeasurementInfo(measurementUuid, MeasurementStatus.Unknown, null)
     )
 
-    lateinit var loadingView: View
-    lateinit var tvStatus: TextView
-    lateinit var btnOK: Button
-    lateinit var btnDetails: Button
-    lateinit var btnFeedback: Button
+    private lateinit var binding: ActivityMeasurementResultBinding
 
-    @SuppressLint("SetTextI18n")
+    private val titlesWithMessages = arrayOf(
+        Pair("Fun fact!", "A tire check today, keeps you safe and on your way!"), Pair(
+            "Did you know?", "Worn tires have less grip.\nReplace them when signs of wear appear!"
+        ), Pair(
+            "Did you know?",
+            "Tires are designed for diverse driving conditions.\nTread patterns keep you safe in rain and snow!"
+        ), Pair(
+            "Fun fact!",
+            "The world’s largest tire is over 24 meters tall.\nIt was used as a Ferris wheel in the 1964 World’s Fair!"
+        ), Pair(
+            "Fun fact!",
+            "Lego is the world's largest tire producer.\nThey make over 300 million tires annually!"
+        ), Pair(
+            "Did you know?",
+            "11,000 accidents per year are due to a bad tire.\nMake sure to check your tires regularly!"
+        ), Pair(
+            "Did you know?",
+            "Tires are getting quieter.\nTread patterns play a key role in minimising road noise!"
+        ), Pair(
+            "Did you know?",
+            "In the early 1900s, tires were grey or beige.\nAdding carbon made them change colour to black."
+        )
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_measurement_result)
+        binding = ActivityMeasurementResultBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val bundle = intent.extras
-        bundle?.also {
-            measurementUuid = it.getString("measurement_uuid") ?: ""
+        measurementUuid = intent.extras?.getString("measurement_uuid") ?: ""
+
+        with(binding.txtResultToken) {
+
+            text = getString(R.string.txt_token, measurementUuid)
+            setOnClickListener {
+                copyTextToClipboard(measurementUuid)
+                Toast.makeText(
+                    this@MeasurementResultActivity,
+                    "Scan ID copied to clipboard",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            initLoadingScreen()
         }
-
-        val txtResultToken = findViewById<TextView>(R.id.txtResultToken)
-        txtResultToken.text = "${getString(R.string.txt_token)} $measurementUuid"
-
-        txtResultToken.setOnClickListener {
-            copyTextToClipboard(measurementUuid)
-            Toast.makeText(this, "Scan ID copied to clipboard", Toast.LENGTH_SHORT).show()
-        }
-
-        initLoadingScreen()
 
         lifecycleScope.launch(backgroundDispatcher) {
             fetchResults()
@@ -72,6 +97,8 @@ class MeasurementResultActivity(
         AnylineTireTreadSdk.getTreadDepthReportResult(measurementUuid, { result: TreadDepthResult ->
             currentResult = result
             runOnUiThread {
+                // TreadDepths can be retrieved in the 'result.global' and 'result.regions' properties.
+                // more information about the measurement can be retrieved in 'result.measurementInfo' property.
                 displayMeasurementResult(result)
             }
         }, { measurementError: MeasurementError ->
@@ -88,86 +115,77 @@ class MeasurementResultActivity(
     }
 
     private fun initLoadingScreen() {
-        loadingView = findViewById(R.id.gifResultLoadingAnimation)
-        loadingView.visibility = View.VISIBLE
+        with(binding) {
+            gifImageView.visibility = View.VISIBLE
+            btnResultReport.visibility = View.GONE
+            btnResultFeedback.visibility = View.GONE
 
-        tvStatus = findViewById(R.id.tvStatus)
-        tvStatus.visibility = View.VISIBLE
-
-        btnOK = findViewById(R.id.btnResultOk)
-        btnOK.text = "Cancel"
-        btnDetails = findViewById(R.id.btnResultReport)
-        btnDetails.visibility = View.GONE
-        btnFeedback = findViewById(R.id.btnResultFeedback)
-        btnFeedback.visibility = View.GONE
+            val randomNumber = Random().asKotlinRandom().nextInt(0, 7)
+            loadingTitle.text = titlesWithMessages[randomNumber].first
+            loadingMessage.text = titlesWithMessages[randomNumber].second
+        }
     }
 
     private fun displayMeasurementResult(measurementResult: TreadDepthResult) {
-        loadingView.visibility = View.GONE
-        tvStatus.visibility = View.GONE
+        with(binding) {
+            gifImageView.visibility = View.GONE
+            btnResultReport.visibility = View.VISIBLE
+            btnResultOk.visibility = View.VISIBLE
+            cancelButton.visibility = View.GONE
+            loadingViewHolder.visibility = View.GONE
+            btnResultFeedback.visibility = View.VISIBLE
+            llMeasurementResults.visibility = View.VISIBLE
 
-        btnOK.text = "Ok"
-        btnDetails.visibility = View.VISIBLE
-        btnFeedback.visibility = View.VISIBLE
+            // Display the Global Result
+            if (PreferencesUtils.shouldUseImperialSystem(this@MeasurementResultActivity)) {
 
-        findViewById<LinearLayout>(R.id.llMeasurementResults).visibility = View.VISIBLE
+                val globalResultInch32nds = measurementResult.global.valueInch32nds
 
-        val llResultGlobal = findViewById<LinearLayout>(R.id.llResultGlobal)
+                // Display the background green/yellow/red according to the Tread Depth
+                llResultGlobal.background = ContextCompat.getDrawable(
+                    this@MeasurementResultActivity,
+                    getResultBackgroundDrawable(globalResultInch32nds)
+                )
+                dividerLineInches.visibility = View.VISIBLE
 
-        // Display the Global Result
-        if (PreferencesUtils.shouldUseImperialSystem(this)) {
+                tvResultInch32ndsGlobal.text = globalResultInch32nds.toString()
+                tvDenominatorGlobal.visibility = View.VISIBLE
+            } else {
+                val globalResultMillimeter = measurementResult.global.valueMm
+                // Display the background green/yellow/red according to the Tread Depth
+                llResultGlobal.background = ContextCompat.getDrawable(
+                    this@MeasurementResultActivity,
+                    getResultBackgroundDrawable(globalResultMillimeter)
+                )
+                tvResultGlobal.text = String.format("%.1f\nmm", globalResultMillimeter)
+            }
 
-            val globalResultInch32nds = measurementResult.global.valueInch32nds
+            // Clean the region results
+            llMeasurementResultRegions.removeAllViews()
 
-            // Display the background green/yellow/red according to the Tread Depth
-            llResultGlobal.background = ContextCompat.getDrawable(
-                this, getResultBackgroundDrawable(globalResultInch32nds)
-            )
+            // Divide the layout by the total of regions and spaces around them.
+            llMeasurementResultRegions.weightSum = (measurementResult.regions.size.toFloat() * 2)
 
-            findViewById<View>(R.id.dividerLineInches).visibility = View.VISIBLE
-
-            findViewById<TextView>(R.id.tvResultInch32ndsGlobal).text =
-                globalResultInch32nds.toString()
-            findViewById<TextView>(R.id.tvDenominatorGlobal).visibility = View.VISIBLE
-        } else {
-            val globalResultMillimeter = measurementResult.global.valueMm
-            // Display the background green/yellow/red according to the Tread Depth
-            llResultGlobal.background = ContextCompat.getDrawable(
-                this, getResultBackgroundDrawable(globalResultMillimeter)
-            )
-
-            val tvResultGlobal = findViewById<TextView>(R.id.tvResultGlobal)
-            val globalString = String.format("%.1f", globalResultMillimeter) + "\nmm"
-            tvResultGlobal.text = globalString
-        }
-
-        val llMeasurementResultRegions = findViewById<LinearLayout>(R.id.llMeasurementResultRegions)
-        // Clean the region results
-        llMeasurementResultRegions.removeAllViews()
-
-        // Divide the layout by the total of regions and spaces around them.
-        llMeasurementResultRegions.weightSum = (measurementResult.regions.size.toFloat() * 2)
-
-        // Display the regions dynamically, from left to right.
-        for (region in measurementResult.regions) {
-            if (region.isAvailable) llMeasurementResultRegions.addView(
-                createAvailableRegionResultView(region)
-            )
-            else llMeasurementResultRegions.addView(createUnavailableRegionResultView())
+            // Display the regions dynamically, from left to right.
+            for (region in measurementResult.regions) {
+                if (region.isAvailable) llMeasurementResultRegions.addView(
+                    createAvailableRegionResultView(region)
+                )
+                else llMeasurementResultRegions.addView(createUnavailableRegionResultView())
+            }
         }
     }
 
     private fun displayError(message: String) {
-        loadingView.visibility = View.GONE
-        tvStatus.visibility = View.GONE
-        btnOK.text = "Ok"
-
-        val tvErrorTitle = findViewById<TextView>(R.id.tvErrorTitle)
-        val tvErrorMessage = findViewById<TextView>(R.id.tvErrorMessage)
-
-        tvErrorTitle.text = resources.getString(R.string.txt_error_title_result_activity)
-        tvErrorMessage.text = message
-        findViewById<ScrollView>(R.id.error_scroll_view).visibility = View.VISIBLE
+        with(binding) {
+            gifImageView.visibility = View.GONE
+            tvErrorTitle.text = resources.getString(R.string.txt_error_title_result_activity)
+            tvErrorMessage.text = message
+            errorScrollView.visibility = View.VISIBLE
+            loadingViewHolder.visibility = View.GONE
+            cancelButton.visibility = View.GONE
+            btnResultOk.visibility = View.VISIBLE
+        }
     }
 
     private fun createAvailableRegionResultView(region: TreadResultRegion): View {

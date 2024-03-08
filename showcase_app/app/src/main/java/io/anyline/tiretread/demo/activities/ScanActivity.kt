@@ -35,6 +35,15 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         Handler(this.mainLooper).removeCallbacksAndMessages(null)
         mainHandler = Handler(this.mainLooper)
 
+        /*
+         * You can, optionally, provide additional context to a scan.
+         * This makes sense in a workflow, where a scan is connected to other TireTread scans or
+         * other information in a larger context.
+         * Check the official documentation for more details.
+        */
+//        val tirePosition = TirePosition(1, TireSide.Left, 1)
+//        val additionalContext = AdditionalContext(tirePosition)
+
         // Configure the TireTreadScanView
         binding.tireTreadScanView.apply {
             scanViewCallback = this@ScanActivity
@@ -56,6 +65,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
             } else {
                 setScanSpeed(ScanSpeed.Slow)
             }
+
+            // addAdditionalContext(additionalContext)
         }
     }
 

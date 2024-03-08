@@ -82,22 +82,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/progressBarResult"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="530dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="50dp"
-        android:background="#00000000"
-        android:progressBackgroundTint="?attr/colorPrimary"
-        android:progressBackgroundTintMode="src_atop"
-        android:progressTint="?attr/colorPrimary"
-        android:progressTintMode="src_atop"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/btnResultOk"
         android:layout_width="125dp"
@@ -106,6 +90,7 @@
         android:background="@drawable/rounded_button"
         android:onClick="finishActivity"
         android:text="@string/btn_ok"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -130,19 +115,6 @@
         android:text="@string/btn_feedback"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txtResultToken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="20dp"
-        android:gravity="start"
-        android:text="@string/txt_token"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/llMeasurementResults"
@@ -219,8 +191,6 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <!-- The fragment_region_result are dynamically added here -->
-
         </LinearLayout>
 
     </LinearLayout>
@@ -271,30 +241,78 @@
         </LinearLayout>
     </ScrollView>
 
-
-    <pl.droidsonroids.gif.GifImageView
-        android:id="@+id/gifResultLoadingAnimation"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:background="@null"
-        android:src="@drawable/any_loading"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_view_holder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/txtResultToken"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llMeasurementResultsHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/llMeasurementResultsHeader">
+
+        <TextView
+            android:id="@+id/loading_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:fontFamily="@font/proxima_nova_bold"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/loading_message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="1"
+            tools:text="blab bla bbla bla" />
+
+        <TextView
+            android:id="@+id/loading_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/proxima_nova_light"
+            android:lines="2"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/gif_image_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Bla bla bla bla bla bla bla bla bla bla" />
+
+        <ProgressBar
+            android:id="@+id/gif_image_view"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="48dp"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/result_loading_indicator"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
+        android:id="@+id/txtResultToken"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_waiting_for_result"
-        android:textStyle="bold"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="@font/proxima_nova_light"
+        android:text="@string/txt_token"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gifResultLoadingAnimation" />
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_button"
+        android:onClick="finishActivity"
+        android:text="@string/btn_cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
