@@ -45,9 +45,6 @@
             android:name=".activities.TutorialActivity"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".activities.ResultFeedbackActivity"
-            android:screenOrientation="sensorLandscape" />
-        <activity
             android:name=".activities.SettingsActivity"
             android:screenOrientation="sensorLandscape" />
         <activity

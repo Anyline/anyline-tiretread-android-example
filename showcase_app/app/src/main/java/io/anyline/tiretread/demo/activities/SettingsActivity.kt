@@ -52,6 +52,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.cbSettingsImperialSystem.isChecked =
             sharedPref.getBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, false)
 
+        binding.showGuidanceCheckBox.isChecked = PreferencesUtils.shouldShowOverlay(this)
+
         binding.etSettingsLicenseKey.setText(
             sharedPref.getString(
                 PreferencesUtils.KEY_LICENSE_KEY, ""
@@ -141,6 +143,9 @@ class SettingsActivity : AppCompatActivity() {
         editor.putString(PreferencesUtils.KEY_LICENSE_KEY, licenseKey)
 
         editor.apply()
+
+        val showOverlay = binding.showGuidanceCheckBox.isChecked
+        PreferencesUtils.showOverlay(this, showOverlay)
     }
 
     private fun initialiseSdk() {
@@ -150,9 +155,5 @@ class SettingsActivity : AppCompatActivity() {
                 this, getString(R.string.txt_setup_correct), Toast.LENGTH_SHORT
             ).show()
         }
-    }
-
-    companion object {
-        private const val REQUEST_CODE_SCAN_BARCODE = 1000
     }
 }

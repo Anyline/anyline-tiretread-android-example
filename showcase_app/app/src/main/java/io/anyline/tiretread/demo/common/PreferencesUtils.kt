@@ -14,6 +14,7 @@ object PreferencesUtils {
     const val KEY_MEASUREMENT_QUALITY_HIGH_SPEED = "measurement_quality_high_speed"
     private const val KEY_SCAN_SPEED = "KEY_SCAN_SPEED"
     private const val KEY_IS_RECORDER = "KEY_IS_RECORDER"
+    private const val KEY_SHOW_OVERLAY = "KEY_SHOW_OVERLAY"
 
     /**
      * Load the default SharedPreferences.
@@ -70,5 +71,14 @@ object PreferencesUtils {
     // This function is only intended for feedback and does not need to be implemented.
     fun setShouldRequestTireId(context: Context, isRecorder: Boolean) {
         loadDefaultSharedPreferences(context).edit().putBoolean(KEY_IS_RECORDER, isRecorder).apply()
+    }
+
+    fun showOverlay(context: Context, showOverlay: Boolean) {
+        loadDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_OVERLAY, showOverlay)
+            .apply()
+    }
+
+    fun shouldShowOverlay(context: Context): Boolean {
+        return loadDefaultSharedPreferences(context).getBoolean(KEY_SHOW_OVERLAY, true)
     }
 }

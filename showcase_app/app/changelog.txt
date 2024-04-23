@@ -1,17 +1,28 @@
 CHANGELOG
 
 ----------------------------------------------------------------------------
+[5.8.1]
 
-[5.7.0]
+REMOVE
+
+- Removed feedback option in result screen
+
+[5.8.0]
 
 ADDED
 
+- Setting to show/hide guidance
+
+[5.7.0]
+
 CHANGED
 
-- Updated to SDK version 4.1.0 with following changes:
+- Updated to SDK version 4.2.0 with following changes:
     - Improved User Guidance:
         - Added Moving Tire overlay during scan
+        - Added phone icon, indicating to move the device during scan
     - Automatically set overlay orientation based on phone's orientation
+    - Improved Upload screen
 
 FIXED
 

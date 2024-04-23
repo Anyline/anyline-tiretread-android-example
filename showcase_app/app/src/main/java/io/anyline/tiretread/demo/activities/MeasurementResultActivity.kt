@@ -2,7 +2,6 @@ package io.anyline.tiretread.demo.activities
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,11 +22,9 @@ import io.anyline.tiretread.sdk.types.MeasurementInfo
 import io.anyline.tiretread.sdk.types.MeasurementStatus
 import io.anyline.tiretread.sdk.types.TreadDepthResult
 import io.anyline.tiretread.sdk.types.TreadResultRegion
-import io.ktor.serialization.kotlinx.json.DefaultJson
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import java.util.Random
 import kotlin.random.asKotlinRandom
 
@@ -37,7 +34,8 @@ class MeasurementResultActivity(
 
     private var measurementUuid: String = ""
     private var currentResult = TreadDepthResult(
-        TreadResultRegion(), listOf(TreadResultRegion()),
+        TreadResultRegion(),
+        listOf(TreadResultRegion()),
         MeasurementInfo(measurementUuid, MeasurementStatus.Unknown, null)
     )
 
@@ -118,7 +116,6 @@ class MeasurementResultActivity(
         with(binding) {
             gifImageView.visibility = View.VISIBLE
             btnResultReport.visibility = View.GONE
-            btnResultFeedback.visibility = View.GONE
 
             val randomNumber = Random().asKotlinRandom().nextInt(0, 7)
             loadingTitle.text = titlesWithMessages[randomNumber].first
@@ -133,7 +130,6 @@ class MeasurementResultActivity(
             btnResultOk.visibility = View.VISIBLE
             cancelButton.visibility = View.GONE
             loadingViewHolder.visibility = View.GONE
-            btnResultFeedback.visibility = View.VISIBLE
             llMeasurementResults.visibility = View.VISIBLE
 
             // Display the Global Result
@@ -226,17 +222,6 @@ class MeasurementResultActivity(
         tvRegionResult.background = ContextCompat.getDrawable(this, R.drawable.result_gray)
 
         return regionResultFragment
-    }
-
-    fun onClickedBtnFeedback(view: View) {
-        val bundle = Bundle()
-        bundle.putString("measurement_uuid", measurementUuid)
-        bundle.putString("current_result", DefaultJson.encodeToString(currentResult))
-
-        val intent = Intent(this, ResultFeedbackActivity::class.java).also {
-            it.putExtras(bundle)
-        }
-        startActivity(intent)
     }
 
     /***

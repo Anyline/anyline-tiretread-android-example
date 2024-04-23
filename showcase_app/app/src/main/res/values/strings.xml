@@ -10,8 +10,6 @@
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_submit">Submit</string>
-    <string name="btn_feedback">Feedback</string>
-    <string name="btn_save">Save</string>
     <string name="btn_details">Details</string>
     <string name="btn_initialize_sdk">Test Setup</string>
     <string name="btn_start_uc">START</string>
@@ -25,18 +23,10 @@
     <string name="txt_main_tire_tread_docu_anyline_com">tiretreaddocu.anyline.com</string>
     <string name="txt_header_tire_tread">Tire Tread</string>
     <string name="txt_header_showcase">Showcase</string>
-    <string name="txt_feedback">Feedback</string>
-    <string name="txt_feedback_hint">Insert your feedback here…</string>
     <string name="txt_waiting_for_result">Waiting for result...</string>
     <string name="txt_token">Scan ID: %s</string>
-    <string name="txt_tire">Tire</string>
-    <string name="txt_feedback_hint_mm">mm</string>
-    <string name="txt_feedback_title">Insert manual tread depths</string>
-    <string name="txt_feedback_saved">Feedback was saved!</string>
-    <string name="txt_feedback_failed">Feedback not saved.</string>
-    <string name="txt_comment_saved">Comment was saved!</string>
-    <string name="txt_comment_failed">Comment was not saved.</string>
     <string name="txt_settings_measurement_system">Use Imperial System:</string>
+    <string name="txt_settings_enable_overlay">Show Guidance:</string>
     <string name="txt_settings_howto_license_key">If you need a license please reach out to presales@anyline.com</string>
     <string name="txt_license_key">License Key:</string>
     <string name="txt_settings">Settings</string>
@@ -53,7 +43,6 @@
     <!--Image(View)-->
     <string name="iv_header_logo">Anyline Logo</string>
     <string name="iv_result">Result</string>
-    <string name="iv_upper_arrow">Arrow</string>
 
     <!--EditText-->
     <string name="et_settings_license_key_hint">Input your license key</string>

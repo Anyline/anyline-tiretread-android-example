@@ -17,6 +17,10 @@ import io.anyline.tiretread.sdk.scanner.MeasurementSystem
 import io.anyline.tiretread.sdk.scanner.ScanSpeed
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
 import io.anyline.tiretread.sdk.scanner.TireTreadScanner
+import io.anyline.tiretread.sdk.ui.configs.DefaultUiConfig
+import io.anyline.tiretread.sdk.ui.configs.HowToScanTooltipConfig
+import io.anyline.tiretread.sdk.ui.configs.LineProgressBarConfig
+import io.anyline.tiretread.sdk.ui.configs.TireOverlayConfig
 
 class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
@@ -44,8 +48,21 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 //        val tirePosition = TirePosition(1, TireSide.Left, 1)
 //        val additionalContext = AdditionalContext(tirePosition)
 
+        val shouldShowOverlay = PreferencesUtils.shouldShowOverlay(this)
+
         // Configure the TireTreadScanView
         binding.tireTreadScanView.apply {
+            withCustomDefaultUiConfig(defaultUiConfig = DefaultUiConfig().apply {
+                tireOverlayConfig = TireOverlayConfig().apply {
+                    visible = shouldShowOverlay
+                }
+                howToScanTooltipConfig = HowToScanTooltipConfig().apply {
+                    visible = shouldShowOverlay
+                }
+                lineProgressBarConfig = LineProgressBarConfig().apply {
+                    visible = shouldShowOverlay
+                }
+            })
             scanViewCallback = this@ScanActivity
             setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
@@ -65,8 +82,6 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
             } else {
                 setScanSpeed(ScanSpeed.Slow)
             }
-
-            // addAdditionalContext(additionalContext)
         }
     }
 
