@@ -24,3 +24,4 @@
 
 -dontwarn org.apiguardian.api.API$Status
 -dontwarn org.apiguardian.api.API
+-dontwarn org.slf4j.impl.StaticLoggerBinder

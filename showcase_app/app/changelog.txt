@@ -1,9 +1,26 @@
 CHANGELOG
 
 ----------------------------------------------------------------------------
+[5.9.2]
+
+CHANGED
+- Use SDK 5.0.0
+- Set up scan process via JSON config
+
+[5.8.2]
+
+CHANGED
+
+- Add arrow icons to (red) distance feedback
+- Change phone+arrow icon for "detect tire / set focus point"
+- Update "align tire overlay" text
+- Update "detect tire" text
+- Update "tap to start" text
+- Change  "shoulder" to "edge"
+
 [5.8.1]
 
-REMOVE
+REMOVED
 
 - Removed feedback option in result screen
 
