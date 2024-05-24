@@ -1,0 +1,39 @@
+{
+  "useDefaultUi": true,
+  "useDefaultHaptic": true,
+  "defaultUiConfig": {
+    "distanceIndicatorConfig": {
+      "visible": true,
+      "textOk": "Distance OK",
+      "textMoveCloser": "Move closer",
+      "textMoveAway": "Move away"
+    },
+    "focusPointTooltipConfig": {
+      "visible": true,
+      "text": "Move your device slowly back and forth to detect the tire."
+    },
+    "howToScanTooltipConfig": {
+      "visible": true,
+      "text": "Align the overlay with your tire’s outer edge. \nTo change the overlay side, flip your device."
+    },
+    "tapToStartScanningTooltipConfig": {
+      "visible": true,
+      "text": "Tap anywhere to start. Then move the device slowly to the inner tire edge."
+    },
+    "tireOverlayConfig": {
+      "visible": true
+    },
+    "uploadViewConfig": {
+      "visible": true,
+      "text": "Uploading..."
+    },
+    "progressTimerConfig": {
+      "visible": true
+    },
+    "lineProgressBarConfig": {
+      "visible": true
+    }
+  },
+  "scanSpeed": "Fast",
+  "measurementSystem": "Metric"
+}

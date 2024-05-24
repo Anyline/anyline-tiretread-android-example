@@ -16,6 +16,7 @@ import io.anyline.tiretread.sdk.scanner.DistanceStatus
 import io.anyline.tiretread.sdk.scanner.MeasurementSystem
 import io.anyline.tiretread.sdk.scanner.ScanSpeed
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
+import io.anyline.tiretread.sdk.scanner.TireTreadScanViewConfig
 import io.anyline.tiretread.sdk.scanner.TireTreadScanner
 import io.anyline.tiretread.sdk.ui.configs.DefaultUiConfig
 import io.anyline.tiretread.sdk.ui.configs.HowToScanTooltipConfig
@@ -39,29 +40,46 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         Handler(this.mainLooper).removeCallbacksAndMessages(null)
         mainHandler = Handler(this.mainLooper)
 
-        /*
-         * You can, optionally, provide additional context to a scan.
-         * This makes sense in a workflow, where a scan is connected to other TireTread scans or
-         * other information in a larger context.
-         * Check the official documentation for more details.
-        */
-//        val tirePosition = TirePosition(1, TireSide.Left, 1)
-//        val additionalContext = AdditionalContext(tirePosition)
-
         val shouldShowOverlay = PreferencesUtils.shouldShowOverlay(this)
 
         // Configure the TireTreadScanView
+
         binding.tireTreadScanView.apply {
-            withCustomDefaultUiConfig(defaultUiConfig = DefaultUiConfig().apply {
-                tireOverlayConfig = TireOverlayConfig().apply {
-                    visible = shouldShowOverlay
+            withScanConfig(TireTreadScanViewConfig().apply {
+                defaultUiConfig = DefaultUiConfig().apply {
+                    tireOverlayConfig = TireOverlayConfig().apply {
+                        visible = shouldShowOverlay
+                    }
+                    howToScanTooltipConfig = HowToScanTooltipConfig().apply {
+                        visible = shouldShowOverlay
+                    }
+                    lineProgressBarConfig = LineProgressBarConfig().apply {
+                        visible = shouldShowOverlay
+                    }
                 }
-                howToScanTooltipConfig = HowToScanTooltipConfig().apply {
-                    visible = shouldShowOverlay
+                measurementSystem =
+                    if (PreferencesUtils.shouldUseImperialSystem(this@ScanActivity)) {
+                        MeasurementSystem.Imperial
+                    } else {
+                        MeasurementSystem.Metric
+                    }
+
+                // This API (scanSpeed) is experimental, may impact scan performance and be removed with any major SDK release.
+                // You are advised to ignore this configuration on your implementation.
+                scanSpeed = if (PreferencesUtils.isFastScanSpeedSet(this@ScanActivity)) {
+                    ScanSpeed.Fast
+                } else {
+                    ScanSpeed.Slow
                 }
-                lineProgressBarConfig = LineProgressBarConfig().apply {
-                    visible = shouldShowOverlay
-                }
+
+                /*
+                 * You can, optionally, provide additional context to a scan.
+                 * This makes sense in a workflow, where a scan is connected to other TireTread scans or
+                 * other information in a larger context.
+                 * Check the official documentation for more details.
+                */
+                // val tirePosition = TirePosition(1, TireSide.Left, 1)
+                // additionalContext = AdditionalContext(tirePosition)
             })
             scanViewCallback = this@ScanActivity
             setViewCompositionStrategy(
@@ -69,19 +87,6 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
                     this@ScanActivity
                 )
             )
-            measurementSystem = if (PreferencesUtils.shouldUseImperialSystem(this@ScanActivity)) {
-                MeasurementSystem.Imperial
-            } else {
-                MeasurementSystem.Metric
-            }
-
-            // This API (scanSpeed) is experimental, may impact scan performance and be removed with any major SDK release.
-            // You are advised to ignore this configuration on your implementation.
-            if (PreferencesUtils.isFastScanSpeedSet(this@ScanActivity)) {
-                setScanSpeed(ScanSpeed.Fast)
-            } else {
-                setScanSpeed(ScanSpeed.Slow)
-            }
         }
     }
 
@@ -142,8 +147,7 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
                 if (TireTreadScanner.instance.isScanning) {
                     TireTreadScanner.instance.stopScanning()
                 } else {
-                    if (TireTreadScanner.instance.captureDistanceStatus == DistanceStatus.OK)
-                        TireTreadScanner.instance.startScanning()
+                    if (TireTreadScanner.instance.captureDistanceStatus == DistanceStatus.OK) TireTreadScanner.instance.startScanning()
                     else {
                         Toast.makeText(
                             this,
