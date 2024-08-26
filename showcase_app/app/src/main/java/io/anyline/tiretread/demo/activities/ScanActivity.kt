@@ -4,20 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.KeyEvent
-import android.view.KeyEvent.ACTION_UP
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.databinding.ActivityScanBinding
 import io.anyline.tiretread.sdk.scanner.AnylineInternalFeature
-import io.anyline.tiretread.sdk.scanner.DistanceStatus
 import io.anyline.tiretread.sdk.scanner.MeasurementSystem
 import io.anyline.tiretread.sdk.scanner.ScanSpeed
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewConfig
-import io.anyline.tiretread.sdk.scanner.TireTreadScanner
 import io.anyline.tiretread.sdk.ui.configs.DefaultUiConfig
 import io.anyline.tiretread.sdk.ui.configs.HowToScanTooltipConfig
 import io.anyline.tiretread.sdk.ui.configs.LineProgressBarConfig
@@ -139,6 +135,7 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         finish()
     }
 
+    /*
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         return when (event.keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
@@ -162,4 +159,5 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
             else -> super.dispatchKeyEvent(event)
         }
     }
+    */
 }

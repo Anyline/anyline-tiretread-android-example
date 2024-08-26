@@ -20,11 +20,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.lifecycleScope
 import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.CustomTypefaceSpan
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.common.makeLinks
 import io.anyline.tiretread.demo.databinding.ActivityMainBinding
+import io.anyline.tiretread.sdk.AnylineTireTreadSdk
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val CAMERA_REQUEST_CODE = 200
 
@@ -32,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private var shouldOpenScanActivity: Boolean = false
 
     private lateinit var binding: ActivityMainBinding
+    private var shouldShowTutorial = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,10 @@ class MainActivity : AppCompatActivity() {
 
         if (!isCameraPermissionGranted()) {
             requestCameraPermission(false)
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            shouldShowTutorial = PreferencesUtils.shouldShowTutorial(this@MainActivity)
         }
 
         binding.btnMainStart.setOnClickListener {
@@ -69,21 +80,44 @@ class MainActivity : AppCompatActivity() {
         displayWelcomeMessages()
     }
 
+    override fun onPostResume() {
+        super.onPostResume()
+        binding.btnMainStart.isEnabled = true
+    }
+
     private fun startScanning() {
-        if (!PreferencesUtils.shouldShowTutorial(this)) {
+        binding.btnMainStart.setText(R.string.main_activity_opening)
+        binding.btnMainStart.isEnabled = false
+
+        if (!isCameraPermissionGranted()) {
+            requestCameraPermission(shouldOpenScanActivity = AnylineTireTreadSdk.isInitialized)
+            binding.btnMainStart.setText(R.string.btn_start)
+            return
+        }
+
+        if (!shouldShowTutorial) {
             goToTutorialScreen()
-        } else {
-            if (!isCameraPermissionGranted()) {
-                requestCameraPermission(true)
-                return
-            }
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
             if (initializeAnylineTireTreadSdk()) {
                 openScanActivity()
+            } else {
+                withContext(Dispatchers.Main) {
+                    binding.btnMainStart.setText(R.string.btn_start)
+                    binding.btnMainStart.isEnabled = true
+                }
             }
         }
     }
 
-    fun goToTutorialScreen() {
+    override fun onResume() {
+        super.onResume()
+        binding.btnMainStart.setText(R.string.btn_start)
+    }
+
+    private fun goToTutorialScreen() {
         val intent = Intent(this, TutorialActivity::class.java)
         startActivity(intent)
     }

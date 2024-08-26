@@ -1,6 +1,26 @@
 CHANGELOG
 
 ----------------------------------------------------------------------------
+
+[5.11.0]
+
+- Use SDK 6.0.0
+- Updated default_config.json to use OrientationWarning (not available in the Showcase app)
+
+[5.10.0]
+
+CHANGED
+- Use SDK 5.2.0
+- When opening the scanner, the "Open scanner" button text is changed to "Opening ..."
+-- This provides useful feedback specially when the internet connection is slow
+
+FIXED
+- From SDK 5.2.0:
+-- Fixed a potential crash that could happen when keeping the ScanView open for several minutes.
+
+REMOVED
+- Removed volume button functionality
+
 [5.9.2]
 
 CHANGED
@@ -45,9 +65,3 @@ FIXED
 
 - Distance feedback could continue to be played after leaving the ScanView in some scenarios.
 - Default UI elements continued to be displayed behind the UPLOADING screen.
-
-[5.6.0]
-
-ADDED
-
-- New loading screen design with spinning tire and fun and/or interesting facts
