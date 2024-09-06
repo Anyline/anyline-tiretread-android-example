@@ -15,15 +15,28 @@ object PreferencesUtils {
     private const val KEY_SCAN_SPEED = "KEY_SCAN_SPEED"
     private const val KEY_IS_RECORDER = "KEY_IS_RECORDER"
     private const val KEY_SHOW_OVERLAY = "KEY_SHOW_OVERLAY"
+    private const val KEY_SHOW_TIRE_WIDTH = "KEY_SHOW_TIRE_WIDTH"
 
     /**
      * Load the default SharedPreferences.
      *
-     * @param context: Context from where the SharedPreferences will be loaded.
+     * @param context: Context where the SharedPreferences will be loaded from.
      */
     fun loadDefaultSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(
             context.packageName.plus(KEY_SETTINGS_FILE), Context.MODE_PRIVATE
+        )
+    }
+
+    /**
+     * Load the a SharedPreferences according to the fileKey provided.
+     *
+     * @param context: Context from where the SharedPreferences will be loaded.
+     * @param fileKey: Key for the specific shared preference
+     */
+    fun loadSharedPreferences(context: Context, fileKey: String): SharedPreferences {
+        return context.getSharedPreferences(
+            context.packageName.plus(fileKey), Context.MODE_PRIVATE
         )
     }
 
@@ -80,5 +93,60 @@ object PreferencesUtils {
 
     fun shouldShowOverlay(context: Context): Boolean {
         return loadDefaultSharedPreferences(context).getBoolean(KEY_SHOW_OVERLAY, true)
+    }
+
+    /**
+     * Adds a new Tire Registration to the SharedPreferences.
+     *
+     * @param context Context where the SharedPreferences will be loaded from.
+     * @param licenseKey The LicenseKey for which the Tire Registration will be added
+     * @param tireId The TireId being registered
+     */
+    fun addNewTireRegistration(context: Context, licenseKey: String, tireId: String) {
+        val licensesSharedPreference = loadSharedPreferences(context, licenseKey)
+        var tireRegistrations = licensesSharedPreference.getInt(tireId, 0)
+        tireRegistrations++
+        licensesSharedPreference.edit().putInt(tireId, tireRegistrations).apply()
+    }
+
+    /**
+     * Adds a new Tire Registration to the SharedPreferences.
+     *
+     * @param context Context where the SharedPreferences will be loaded from.
+     * @param tireId The TireId being registered
+     */
+    fun addNewTireRegistrationToCurrentLicenseKey(context: Context, tireId: String) {
+        val licenseKey = getLicenseKey(context) ?: ""
+        addNewTireRegistration(context, licenseKey, tireId)
+    }
+
+    /**
+     * Loads the Tire Registration Count from the SharedPreferences.
+     *
+     * @param context Context where the SharedPreferences will be loaded from.
+     * @param licenseKey The LicenseKey for which the Tire Registration will loaded
+     * @param tireId The TireId being checked
+     */
+    fun loadTireRegistrationCount(context: Context, licenseKey: String, tireId: String): Int {
+        return loadSharedPreferences(context, licenseKey).getInt(tireId, 0)
+    }
+
+    /**
+     * Loads the Tire Registration Count from the SharedPreferences for the current License Key.
+     *
+     * @param context Context where the SharedPreferences will be loaded from.
+     * @param tireId The TireId being checked
+     */
+    fun loadTireRegistrationCountForCurrentLicenseKey(context: Context, tireId: String): Int {
+        val licenseKey = getLicenseKey(context) ?: ""
+        return loadTireRegistrationCount(context, licenseKey, tireId)
+    }
+
+    fun shouldShowTireWidthDialog(context: Context): Boolean {
+        return loadDefaultSharedPreferences(context).getBoolean(KEY_SHOW_TIRE_WIDTH, false)
+    }
+
+    fun setShouldShowTireWidthDialog(context: Context, value: Boolean) {
+        loadDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_TIRE_WIDTH, value).apply()
     }
 }

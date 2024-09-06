@@ -15,11 +15,9 @@ import io.anyline.tiretread.demo.R
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.databinding.ActivityMeasurementResultBinding
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
+import io.anyline.tiretread.sdk.Response
 import io.anyline.tiretread.sdk.getTreadDepthReportResult
 import io.anyline.tiretread.sdk.getTreadDepthReportUrlString
-import io.anyline.tiretread.sdk.types.MeasurementError
-import io.anyline.tiretread.sdk.types.MeasurementInfo
-import io.anyline.tiretread.sdk.types.MeasurementStatus
 import io.anyline.tiretread.sdk.types.TreadDepthResult
 import io.anyline.tiretread.sdk.types.TreadResultRegion
 import kotlinx.coroutines.CoroutineDispatcher
@@ -33,11 +31,7 @@ class MeasurementResultActivity(
 ) : AppCompatActivity() {
 
     private var measurementUuid: String = ""
-    private var currentResult = TreadDepthResult(
-        TreadResultRegion(),
-        listOf(TreadResultRegion()),
-        MeasurementInfo(measurementUuid, MeasurementStatus.Unknown, null)
-    )
+    private lateinit var currentResult: TreadDepthResult
 
     private lateinit var binding: ActivityMeasurementResultBinding
 
@@ -92,18 +86,30 @@ class MeasurementResultActivity(
     }
 
     private fun fetchResults() {
-        AnylineTireTreadSdk.getTreadDepthReportResult(measurementUuid, { result: TreadDepthResult ->
-            currentResult = result
-            runOnUiThread {
-                // TreadDepths can be retrieved in the 'result.global' and 'result.regions' properties.
-                // more information about the measurement can be retrieved in 'result.measurementInfo' property.
-                displayMeasurementResult(result)
+        AnylineTireTreadSdk.getTreadDepthReportResult(measurementUuid) {
+            when (it) {
+                is Response.Success -> {
+                    currentResult = it.data
+                    runOnUiThread {
+                        // TreadDepths can be retrieved in the 'result.global' and 'result.regions' properties.
+                        // more information about the measurement can be retrieved in 'result.measurementInfo' property.
+                        displayMeasurementResult()
+                    }
+                }
+
+                is Response.Error -> {
+                    runOnUiThread {
+                        displayError(it.errorMessage ?: "Unknown Error!")
+                    }
+                }
+
+                is Response.Exception -> {
+                    runOnUiThread {
+                        displayError(it.exception.message ?: "Unknown Error")
+                    }
+                }
             }
-        }, { measurementError: MeasurementError ->
-            runOnUiThread {
-                displayError(measurementError.toString())
-            }
-        })
+        }
     }
 
     private fun copyTextToClipboard(text: String) {
@@ -123,7 +129,7 @@ class MeasurementResultActivity(
         }
     }
 
-    private fun displayMeasurementResult(measurementResult: TreadDepthResult) {
+    private fun displayMeasurementResult() {
         with(binding) {
             gifImageView.visibility = View.GONE
             btnResultReport.visibility = View.VISIBLE
@@ -135,7 +141,7 @@ class MeasurementResultActivity(
             // Display the Global Result
             if (PreferencesUtils.shouldUseImperialSystem(this@MeasurementResultActivity)) {
 
-                val globalResultInch32nds = measurementResult.global.valueInch32nds
+                val globalResultInch32nds = currentResult.global.valueInch32nds
 
                 // Display the background green/yellow/red according to the Tread Depth
                 llResultGlobal.background = ContextCompat.getDrawable(
@@ -147,7 +153,7 @@ class MeasurementResultActivity(
                 tvResultInch32ndsGlobal.text = globalResultInch32nds.toString()
                 tvDenominatorGlobal.visibility = View.VISIBLE
             } else {
-                val globalResultMillimeter = measurementResult.global.valueMm
+                val globalResultMillimeter = currentResult.global.valueMm
                 // Display the background green/yellow/red according to the Tread Depth
                 llResultGlobal.background = ContextCompat.getDrawable(
                     this@MeasurementResultActivity,
@@ -160,10 +166,10 @@ class MeasurementResultActivity(
             llMeasurementResultRegions.removeAllViews()
 
             // Divide the layout by the total of regions and spaces around them.
-            llMeasurementResultRegions.weightSum = (measurementResult.regions.size.toFloat() * 2)
+            llMeasurementResultRegions.weightSum = currentResult.regions.size.toFloat() * 2
 
             // Display the regions dynamically, from left to right.
-            for (region in measurementResult.regions) {
+            for (region in currentResult.regions) {
                 if (region.isAvailable) llMeasurementResultRegions.addView(
                     createAvailableRegionResultView(region)
                 )
@@ -229,14 +235,32 @@ class MeasurementResultActivity(
      */
     fun onClickedBtnReport(view: View) {
         val uuid = measurementUuid
-        AnylineTireTreadSdk.getTreadDepthReportUrlString(uuid, {
-            startActivity(MeasurementResultDetailsActivity.newIntent(this, uuid))
-        }, { exception ->
-            Log.e("Showcase", "Exception raised while loading the PDF", exception)
-            Toast.makeText(
-                this, "The detailed report cannot be displayed at the moment.", Toast.LENGTH_SHORT
-            ).show()
-        })
+        AnylineTireTreadSdk.getTreadDepthReportUrlString(uuid) {
+            when (it) {
+                is Response.Success -> startActivity(
+                    MeasurementResultDetailsActivity.newIntent(
+                        this, uuid
+                    )
+                )
+
+                is Response.Error -> {
+                    onReportError(it.errorMessage)
+                }
+
+                is Response.Exception -> {
+                    onReportError(null, it.exception)
+                }
+            }
+        }
+    }
+
+    private fun onReportError(message: String? = null, exception: Exception? = null) {
+        Log.e("Showcase", message ?: "Exception raised while loading the PDF", exception)
+        Toast.makeText(
+            this,
+            message ?: "The detailed report cannot be displayed at the moment.",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun finishActivity(view: View) {

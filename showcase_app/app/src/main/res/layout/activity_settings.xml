@@ -274,6 +274,29 @@
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
                 app:layout_constraintTop_toBottomOf="@id/scan_speed_text_view" />
 
+            <TextView
+                android:id="@+id/show_tire_width_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:text="Use tire width"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/show_tire_width_check_box"
+                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/show_tire_width_check_box" />
+
+            <CheckBox
+                android:id="@+id/show_tire_width_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/stone_grey"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
+                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
+                app:layout_constraintTop_toBottomOf="@id/show_guidance_check_box" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

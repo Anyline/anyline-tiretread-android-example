@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -48,10 +49,11 @@ import androidx.lifecycle.lifecycleScope
 import com.google.common.util.concurrent.ListenableFuture
 import io.anyline.tiretread.demo.BarcodeScanner
 import io.anyline.tiretread.demo.R
+import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.ui.AnylineButton
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
+import io.anyline.tiretread.sdk.Response
 import io.anyline.tiretread.sdk.sendTireIdFeedback
-import io.anyline.tiretread.sdk.ui.Colors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
@@ -138,7 +140,7 @@ class ScanBarcodeActivity : AppCompatActivity() {
                         height = Dimension.matchParent
                         width = Dimension.matchParent
                     }
-                    .background(Colors.WHITE))
+                    .background(Color.White))
             }
 
             intent.getStringExtra(EXTRA_GUIDANCE_TEXT)?.let {
@@ -246,11 +248,29 @@ class ScanBarcodeActivity : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
 
                 AnylineTireTreadSdk.Companion.sendTireIdFeedback(
-                    it,
-                    tireId,
-                    ::onSendTireFeedbackSuccess,
+                    it, tireId
                 ) {
-                    onSendTireFeedbackFailed(tireId)
+                    when (it) {
+                        is Response.Success -> {
+                            PreferencesUtils.addNewTireRegistrationToCurrentLicenseKey(
+                                this@ScanBarcodeActivity,
+                                tireId
+                            )
+                            onSendTireFeedbackSuccess()
+                            showRegistrationCountToast(tireId)
+                            return@sendTireIdFeedback
+                        }
+
+                        is Response.Error -> {
+                            Log.e("Demo", "${it.errorCode} - ${it.errorMessage}")
+                            onSendTireFeedbackFailed(tireId)
+                        }
+
+                        is Response.Exception -> {
+                            Log.e("Demo", "${it.exception}")
+                            onSendTireFeedbackFailed(tireId)
+                        }
+                    }
                 }
             }
         }
@@ -261,7 +281,7 @@ class ScanBarcodeActivity : AppCompatActivity() {
             Toast.makeText(
                 this@ScanBarcodeActivity,
                 "Your data recording has been successfully submitted.",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_SHORT
             ).show()
             finish()
         }
@@ -281,12 +301,30 @@ class ScanBarcodeActivity : AppCompatActivity() {
             isScanning.value = true
             attachAnalyser()
             it.dismiss()
-        }.setNeutralButton("Submit") { _, _ -> sendTireId(tireId) }
+        }.setPositiveButton("Submit") { _, _ -> sendTireId(tireId) }
             .setNegativeButton("Rescan Barcode") { dialog, _ ->
                 isScanning.value = true
                 attachAnalyser()
                 dialog.dismiss()
-            }.setPositiveButton("Abort") { _, _ -> finish() }.create().show()
+            }.setNeutralButton("Abort") { _, _ -> finish() }.create().show()
+    }
+
+    /**
+     * Shows the Registration Count for the provided tireId.
+     *
+     * @param tireId Tire Id for which the registration count will be displayed
+     */
+    private fun showRegistrationCountToast(tireId: String) {
+        val tireRegistrationCount =
+            PreferencesUtils.loadTireRegistrationCountForCurrentLicenseKey(this, tireId)
+
+        runOnUiThread {
+            Toast.makeText(
+                this,
+                "Tire Id: $tireId \nRegistries: $tireRegistrationCount",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     companion object {
