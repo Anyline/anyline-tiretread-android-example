@@ -4,20 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.KeyEvent
-import android.view.KeyEvent.ACTION_UP
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.databinding.ActivityScanBinding
 import io.anyline.tiretread.sdk.scanner.AnylineInternalFeature
-import io.anyline.tiretread.sdk.scanner.DistanceStatus
 import io.anyline.tiretread.sdk.scanner.MeasurementSystem
 import io.anyline.tiretread.sdk.scanner.ScanSpeed
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewConfig
-import io.anyline.tiretread.sdk.scanner.TireTreadScanner
 import io.anyline.tiretread.sdk.ui.configs.DefaultUiConfig
 import io.anyline.tiretread.sdk.ui.configs.HowToScanTooltipConfig
 import io.anyline.tiretread.sdk.ui.configs.LineProgressBarConfig
@@ -42,45 +38,51 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
         val shouldShowOverlay = PreferencesUtils.shouldShowOverlay(this)
 
+        val tireWidth = intent.getIntExtra("tireWidth", -1)
+
         // Configure the TireTreadScanView
 
         binding.tireTreadScanView.apply {
-            withScanConfig(TireTreadScanViewConfig().apply {
-                defaultUiConfig = DefaultUiConfig().apply {
-                    tireOverlayConfig = TireOverlayConfig().apply {
-                        visible = shouldShowOverlay
+            withScanConfig(
+                tireTreadScanViewConfig = TireTreadScanViewConfig().apply {
+                    defaultUiConfig = DefaultUiConfig().apply {
+                        tireOverlayConfig = TireOverlayConfig().apply {
+                            visible = shouldShowOverlay
+                        }
+                        howToScanTooltipConfig = HowToScanTooltipConfig().apply {
+                            visible = shouldShowOverlay
+                        }
+                        lineProgressBarConfig = LineProgressBarConfig().apply {
+                            visible = shouldShowOverlay
+                        }
                     }
-                    howToScanTooltipConfig = HowToScanTooltipConfig().apply {
-                        visible = shouldShowOverlay
-                    }
-                    lineProgressBarConfig = LineProgressBarConfig().apply {
-                        visible = shouldShowOverlay
-                    }
-                }
-                measurementSystem =
-                    if (PreferencesUtils.shouldUseImperialSystem(this@ScanActivity)) {
-                        MeasurementSystem.Imperial
+                    measurementSystem =
+                        if (PreferencesUtils.shouldUseImperialSystem(this@ScanActivity)) {
+                            MeasurementSystem.Imperial
+                        } else {
+                            MeasurementSystem.Metric
+                        }
+
+                    // This API (scanSpeed) is experimental, may impact scan performance and be removed with any major SDK release.
+                    // You are advised to ignore this configuration on your implementation.
+                    scanSpeed = if (PreferencesUtils.isFastScanSpeedSet(this@ScanActivity)) {
+                        ScanSpeed.Fast
                     } else {
-                        MeasurementSystem.Metric
+                        ScanSpeed.Slow
                     }
 
-                // This API (scanSpeed) is experimental, may impact scan performance and be removed with any major SDK release.
-                // You are advised to ignore this configuration on your implementation.
-                scanSpeed = if (PreferencesUtils.isFastScanSpeedSet(this@ScanActivity)) {
-                    ScanSpeed.Fast
-                } else {
-                    ScanSpeed.Slow
-                }
-
-                /*
-                 * You can, optionally, provide additional context to a scan.
-                 * This makes sense in a workflow, where a scan is connected to other TireTread scans or
-                 * other information in a larger context.
-                 * Check the official documentation for more details.
-                */
-                // val tirePosition = TirePosition(1, TireSide.Left, 1)
-                // additionalContext = AdditionalContext(tirePosition)
-            })
+                    /*
+                     * You can, optionally, provide additional context to a scan.
+                     * This makes sense in a workflow, where a scan is connected to other TireTread scans or
+                     * other information in a larger context.
+                     * Check the official documentation for more details.
+                    */
+                    // val tirePosition = TirePosition(1, TireSide.Left, 1)
+                    // additionalContext = AdditionalContext(tirePosition)
+                }, tireWidth = if (tireWidth > 0) {
+                    tireWidth
+                } else null
+            )
             scanViewCallback = this@ScanActivity
             setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
@@ -139,6 +141,7 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         finish()
     }
 
+    /*
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         return when (event.keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN -> {
@@ -162,4 +165,5 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
             else -> super.dispatchKeyEvent(event)
         }
     }
+    */
 }

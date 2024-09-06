@@ -24,24 +24,22 @@ class MeasurementResultDetailViewModel : ViewModel() {
         _pdfByteStream.postValue(Response.Loading())
 
         viewModelScope.launch(Dispatchers.IO) {
-            AnylineTireTreadSdk.getTreadDepthReportPdf(uuid, { data ->
-                if (data.isNotEmpty()) {
-                    onPdfResponse(Response.Success(data))
-                } else {
-                    onPdfResponse(
+            AnylineTireTreadSdk.getTreadDepthReportPdf(uuid) {
+                when (it) {
+                    is io.anyline.tiretread.sdk.Response.Success -> onPdfResponse(Response.Success(it.data))
+                    is io.anyline.tiretread.sdk.Response.Error -> onPdfResponse(
                         Response.Error(
                             "Error! Byte array empty!"
                         )
                     )
-                }
-            }, { exception ->
-                onPdfResponse(
-                    Response.Error(
-                        exception.message ?: "Failed to load PDF report!"
-                    )
-                )
-            })
 
+                    is io.anyline.tiretread.sdk.Response.Exception -> onPdfResponse(
+                        Response.Error(
+                            it.exception.message ?: "Failed to load PDF report!"
+                        )
+                    )
+                }
+            }
         }
     }
 

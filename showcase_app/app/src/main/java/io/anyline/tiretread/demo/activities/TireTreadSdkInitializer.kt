@@ -9,26 +9,29 @@ import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
 import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
 import io.anyline.tiretread.sdk.shouldRequestTireIdFeedback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object TireTreadSdkInitializer {
 
     fun initSdk(activity: Activity, licenseKey: String, onSuccess: () -> Unit = { }): Boolean {
 
         // Initialize the SDK
-        try {
+        val error = try {
             AnylineTireTreadSdk.init(licenseKey, activity)
             onSuccess.invoke()
             setShouldRequestTireId(activity)
             return true
         } catch (e: SdkLicenseKeyInvalidException) {
-            Toast.makeText(
-                activity,
-                activity.getString(R.string.txt_error_setup_failure_license_key),
-                Toast.LENGTH_LONG
-            ).show()
+            activity.getString(R.string.txt_error_setup_failure_license_key)
         } catch (e: SdkInitializeFailedException) {
+            activity.getString(R.string.txt_error_setup_failure)
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
             Toast.makeText(
-                activity, activity.getString(R.string.txt_error_setup_failure), Toast.LENGTH_LONG
+                activity, error, Toast.LENGTH_LONG
             ).show()
         }
         return false

@@ -52,6 +52,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.cbSettingsImperialSystem.isChecked =
             sharedPref.getBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, false)
 
+        binding.showTireWidthCheckBox.isChecked = PreferencesUtils.shouldShowTireWidthDialog(this)
+
         binding.showGuidanceCheckBox.isChecked = PreferencesUtils.shouldShowOverlay(this)
 
         binding.etSettingsLicenseKey.setText(
@@ -146,6 +148,8 @@ class SettingsActivity : AppCompatActivity() {
 
         val showOverlay = binding.showGuidanceCheckBox.isChecked
         PreferencesUtils.showOverlay(this, showOverlay)
+
+        PreferencesUtils.setShouldShowTireWidthDialog(this, binding.showTireWidthCheckBox.isChecked)
     }
 
     private fun initialiseSdk() {

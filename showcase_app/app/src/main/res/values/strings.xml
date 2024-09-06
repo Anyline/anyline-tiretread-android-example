@@ -3,6 +3,7 @@
 
     <!--Button-->
     <string name="btn_start">Open Scanner</string>
+    <string name="main_activity_opening">Opening ...</string>
     <string name="btn_tutorial">Tutorial</string>
     <string name="btn_settings">Settings</string>
     <string name="btn_testing">API TEST</string>
