@@ -2,6 +2,11 @@ CHANGELOG
 
 ----------------------------------------------------------------------------
 
+[5.13.0]
+
+- Use SDK 6.1.1
+- Using tire width by default
+
 [5.12.0]
 
 - Added tire width screen

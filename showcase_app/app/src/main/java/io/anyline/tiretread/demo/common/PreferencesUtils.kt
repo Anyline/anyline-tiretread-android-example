@@ -143,7 +143,7 @@ object PreferencesUtils {
     }
 
     fun shouldShowTireWidthDialog(context: Context): Boolean {
-        return loadDefaultSharedPreferences(context).getBoolean(KEY_SHOW_TIRE_WIDTH, false)
+        return loadDefaultSharedPreferences(context).getBoolean(KEY_SHOW_TIRE_WIDTH, true)
     }
 
     fun setShouldShowTireWidthDialog(context: Context, value: Boolean) {
