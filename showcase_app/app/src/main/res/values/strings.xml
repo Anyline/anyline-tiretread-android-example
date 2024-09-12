@@ -52,6 +52,6 @@
     <string name="settings_screen_versions">App: %1$s - SDK: %2$s - Android API: %3$s</string>
     <string name="settings_screen_slow">Slow (tap to change)</string>
     <string name="settings_screen_fast">Fast (tap to change)</string>
-    <string name="settings_screen_scan_speed_label">Scan speed:</string>
+    <string name="settings_screen_scan_speed_label">Scan Speed:</string>
 
 </resources>
