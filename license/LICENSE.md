@@ -4,8 +4,7 @@
 
 This demonstration app uses the Anyline Tire Tread software development kit,  
 which is the intellectual property of Anyline GmbH.  
-The use of the SDK and this app is subject to the provisions of the most recent Master Subscription Agreement of Anyline GmbH (or one of its subsidiaries), available under Imprint & Legal of Anyline GmbH & Anyline Inc. | Anyline  
-and is only allowed if you have received a “Trial Access” (as defined in the Master Subscription Agreement).
+The use of the SDK and this app is subject to the most recent Master Subscription Terms of Anyline GmbH (or one of its subsidiaries), Terms of Use for the Anyline App and Anyline’s Privacy Policies, available under Imprint & Legal of Anyline GmbH & Anyline Inc. | Anyline (or to a “Master Partner Agreement” if you are a partner of Anyline), and is only allowed if you have received a “Trial Access” (as defined in the Master Subscription Terms) or a license according to the Master Subscription Terms (or Master Partner Agreement).
 
 ## Contact
 
