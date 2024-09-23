@@ -279,7 +279,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|start"
-                android:text="Enter Tire Width"
+                android:text="Enter Tire Width:"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toBottomOf="@id/show_tire_width_check_box"
                 app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
