@@ -247,7 +247,7 @@ class ScanBarcodeActivity : AppCompatActivity() {
             loading.value = true
             lifecycleScope.launch(Dispatchers.IO) {
 
-                AnylineTireTreadSdk.Companion.sendTireIdFeedback(
+                AnylineTireTreadSdk.sendTireIdFeedback(
                     it, tireId
                 ) {
                     when (it) {

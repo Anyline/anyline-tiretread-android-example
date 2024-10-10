@@ -8,6 +8,7 @@ import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
 import io.anyline.tiretread.sdk.SdkInitializeFailedException
 import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
+import io.anyline.tiretread.sdk.init
 import io.anyline.tiretread.sdk.shouldRequestTireIdFeedback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,7 @@ object TireTreadSdkInitializer {
     }
 
     private fun setShouldRequestTireId(context: Context) {
-        val shouldRequestTireId = AnylineTireTreadSdk.Companion.shouldRequestTireIdFeedback()
+        val shouldRequestTireId = AnylineTireTreadSdk.shouldRequestTireIdFeedback()
         PreferencesUtils.setShouldRequestTireId(context, shouldRequestTireId)
     }
 }
