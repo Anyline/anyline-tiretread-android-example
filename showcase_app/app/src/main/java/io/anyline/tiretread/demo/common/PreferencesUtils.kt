@@ -7,15 +7,14 @@ object PreferencesUtils {
 
     private const val KEY_SETTINGS_FILE = "io.anyline.tiretread.demo.DEFAULT_FILE_KEY"
 
-    const val KEY_MEASUREMENT_DATA = "measurement_data"
     const val KEY_IMPERIAL_SYSTEM = "imperial_system"
     const val KEY_LICENSE_KEY = "license_key"
     private const val KEY_TUTORIAL_SHOWN = "tutorial_shown"
-    const val KEY_MEASUREMENT_QUALITY_HIGH_SPEED = "measurement_quality_high_speed"
     private const val KEY_SCAN_SPEED = "KEY_SCAN_SPEED"
     private const val KEY_IS_RECORDER = "KEY_IS_RECORDER"
     private const val KEY_SHOW_OVERLAY = "KEY_SHOW_OVERLAY"
-    private const val KEY_SHOW_TIRE_WIDTH = "KEY_SHOW_TIRE_WIDTH"
+    private const val KEY_USE_DEVICE_COMPATIBILITY_MODE = "KEY_SHOW_TIRE_WIDTH"
+    private const val KEY_CUSTOM_TAG = "KEY_CUSTOM_TAG"
 
     /**
      * Load the default SharedPreferences.
@@ -142,11 +141,27 @@ object PreferencesUtils {
         return loadTireRegistrationCount(context, licenseKey, tireId)
     }
 
-    fun shouldShowTireWidthDialog(context: Context): Boolean {
-        return loadDefaultSharedPreferences(context).getBoolean(KEY_SHOW_TIRE_WIDTH, false)
+    fun shouldUseDeviceCompatibilityMode(context: Context): Boolean {
+        return loadDefaultSharedPreferences(context).getBoolean(
+            KEY_USE_DEVICE_COMPATIBILITY_MODE, true
+        )
     }
 
-    fun setShouldShowTireWidthDialog(context: Context, value: Boolean) {
-        loadDefaultSharedPreferences(context).edit().putBoolean(KEY_SHOW_TIRE_WIDTH, value).apply()
+    fun setShouldUseDeviceCompatibilityMode(context: Context, value: Boolean) {
+        loadDefaultSharedPreferences(context).edit()
+            .putBoolean(KEY_USE_DEVICE_COMPATIBILITY_MODE, value).apply()
+    }
+
+    fun getCustomTag(context: Context): String? {
+        return loadDefaultSharedPreferences(context).getString(
+            KEY_CUSTOM_TAG, null
+        )
+    }
+
+    fun setCustomTag(context: Context, customTag: String?) {
+        customTag?.let {
+            loadDefaultSharedPreferences(context).edit().putString(KEY_CUSTOM_TAG, customTag)
+                .apply()
+        }
     }
 }
