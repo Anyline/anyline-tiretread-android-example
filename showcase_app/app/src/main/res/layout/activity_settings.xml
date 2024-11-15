@@ -156,29 +156,6 @@
                 app:layout_constraintGuide_begin="200dp" />
 
             <TextView
-                android:id="@+id/use_imperial_system_label"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:text="@string/txt_settings_measurement_system"
-                android:textSize="16dp"
-                app:layout_constraintBottom_toBottomOf="@id/cbSettingsImperialSystem"
-                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cbSettingsImperialSystem" />
-
-            <CheckBox
-                android:id="@+id/cbSettingsImperialSystem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/stone_grey"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
-                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
                 android:id="@+id/license_key_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -200,10 +177,10 @@
                 android:inputType="text"
                 android:textColor="@color/textColor"
                 android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/scan_barcode_button"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
-                app:layout_constraintTop_toBottomOf="@id/cbSettingsImperialSystem" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/scan_barcode_button"
@@ -228,6 +205,29 @@
                 app:layout_constraintTop_toBottomOf="@id/etSettingsLicenseKey" />
 
             <TextView
+                android:id="@+id/use_imperial_system_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:text="@string/txt_settings_measurement_system"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/cbSettingsImperialSystem"
+                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cbSettingsImperialSystem" />
+
+            <CheckBox
+                android:id="@+id/cbSettingsImperialSystem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/stone_grey"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
+                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
+                app:layout_constraintTop_toBottomOf="@id/tvHowToLicenseKey" />
+
+            <TextView
                 android:id="@+id/scan_speed_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -248,15 +248,38 @@
                 android:textSize="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
-                app:layout_constraintTop_toBottomOf="@id/tvHowToLicenseKey"
+                app:layout_constraintTop_toBottomOf="@id/cbSettingsImperialSystem"
                 app:switchPadding="2dp" />
+
+            <TextView
+                android:id="@+id/device_compatibility_mode_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:text="Device Compatibility Mode:"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/device_compatibility_mode_check_box"
+                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/device_compatibility_mode_check_box" />
+
+            <CheckBox
+                android:id="@+id/device_compatibility_mode_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/stone_grey"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
+                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
+                app:layout_constraintTop_toBottomOf="@id/scan_speed_text_view" />
 
             <TextView
                 android:id="@+id/show_guidance_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|start"
-                android:text="@string/txt_settings_enable_overlay"
+                android:text="Show User Guidance:"
                 android:textSize="16dp"
                 app:layout_constraintBottom_toBottomOf="@id/show_guidance_check_box"
                 app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
@@ -272,28 +295,32 @@
                 android:scaleY="1.5"
                 app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
-                app:layout_constraintTop_toBottomOf="@id/scan_speed_text_view" />
+                app:layout_constraintTop_toBottomOf="@id/device_compatibility_mode_check_box" />
 
             <TextView
-                android:id="@+id/show_tire_width_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:text="Enter Tire Width:"
-                android:textSize="16dp"
-                app:layout_constraintBottom_toBottomOf="@id/show_tire_width_check_box"
-                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/show_tire_width_check_box" />
-
-            <CheckBox
-                android:id="@+id/show_tire_width_check_box"
+                android:id="@+id/custom_tag_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/stone_grey"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
+                android:layout_gravity="center|start"
+                android:text="Custom Tag:"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="@id/custom_tag_edit_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/custom_tag_edit_text" />
+
+            <EditText
+                android:id="@+id/custom_tag_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:autofillHints="text"
+                android:background="@drawable/shape_border_edit_text"
+                android:hint="Input your custom tag"
+                android:inputType="text"
+                android:textColor="@color/textColor"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/scan_barcode_button"
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
                 app:layout_constraintTop_toBottomOf="@id/show_guidance_check_box" />
 
@@ -334,7 +361,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="24dp"
-        android:text="@string/txt_settings_device_name"
+        android:text="Device Model:"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guideline"

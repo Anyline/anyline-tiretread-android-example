@@ -13,7 +13,7 @@ repositories {
 }
 
 ext.versionMajor = 5
-ext.versionMinor = 16
+ext.versionMinor = 17
 ext.versionPatch = 0
 ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
 ext.buildNumber = System.getenv("BUILD_NUMBER")
@@ -27,7 +27,7 @@ android {
         minSdk 26
         targetSdk 34
         versionCode generateVersionCode()
-        versionName generateVersionName()+"_main"
+        versionName generateVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -96,7 +96,7 @@ android {
 
 dependencies {
     // Anyline
-    implementation 'io.anyline.tiretread.sdk:shared:8+'
+    implementation 'io.anyline.tiretread.sdk:shared:9+'
 
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'

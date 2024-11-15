@@ -52,7 +52,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.cbSettingsImperialSystem.isChecked =
             sharedPref.getBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, false)
 
-        binding.showTireWidthCheckBox.isChecked = PreferencesUtils.shouldShowTireWidthDialog(this)
+        binding.deviceCompatibilityModeCheckBox.isChecked =
+            PreferencesUtils.shouldUseDeviceCompatibilityMode(this)
 
         binding.showGuidanceCheckBox.isChecked = PreferencesUtils.shouldShowOverlay(this)
 
@@ -76,6 +77,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.scanBarcodeButton.setOnClickListener {
             activityResultLauncher.launch(ScanBarcodeActivity.newIntent(this))
         }
+
+        binding.customTagEditText.setText(PreferencesUtils.getCustomTag(this))
 
         setUpScanSpeedTextView()
         setUpButtons()
@@ -149,7 +152,15 @@ class SettingsActivity : AppCompatActivity() {
         val showOverlay = binding.showGuidanceCheckBox.isChecked
         PreferencesUtils.showOverlay(this, showOverlay)
 
-        PreferencesUtils.setShouldShowTireWidthDialog(this, binding.showTireWidthCheckBox.isChecked)
+        PreferencesUtils.setShouldUseDeviceCompatibilityMode(
+            this, binding.deviceCompatibilityModeCheckBox.isChecked
+        )
+
+        binding.customTagEditText.text.toString().let {
+            if (it.isNotEmpty()) {
+                PreferencesUtils.setCustomTag(this, it)
+            }
+        }
     }
 
     private fun initialiseSdk() {

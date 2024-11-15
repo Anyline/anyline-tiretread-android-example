@@ -18,9 +18,12 @@ object TireTreadSdkInitializer {
 
     fun initSdk(activity: Activity, licenseKey: String, onSuccess: () -> Unit = { }): Boolean {
 
+        val customTag = PreferencesUtils.getCustomTag(activity)
+
         // Initialize the SDK
         val error = try {
-            AnylineTireTreadSdk.init(licenseKey, activity)
+            // The customTag is meant for internal use only. Simply omit this parameter in your implementation.
+            AnylineTireTreadSdk.init(licenseKey, activity, customTag)
             onSuccess.invoke()
             setShouldRequestTireId(activity)
             return true

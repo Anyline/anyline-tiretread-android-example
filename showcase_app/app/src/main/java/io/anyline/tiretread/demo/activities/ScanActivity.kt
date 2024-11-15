@@ -9,14 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import io.anyline.tiretread.demo.common.PreferencesUtils
 import io.anyline.tiretread.demo.databinding.ActivityScanBinding
-import io.anyline.tiretread.sdk.scanner.AnylineInternalFeature
 import io.anyline.tiretread.sdk.scanner.MeasurementSystem
 import io.anyline.tiretread.sdk.scanner.ScanSpeed
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewCallback
 import io.anyline.tiretread.sdk.scanner.TireTreadScanViewConfig
+import io.anyline.tiretread.sdk.ui.configs.CountdownConfig
 import io.anyline.tiretread.sdk.ui.configs.DefaultUiConfig
-import io.anyline.tiretread.sdk.ui.configs.HowToScanTooltipConfig
-import io.anyline.tiretread.sdk.ui.configs.LineProgressBarConfig
+import io.anyline.tiretread.sdk.ui.configs.ScanDirectionConfig
 import io.anyline.tiretread.sdk.ui.configs.TireOverlayConfig
 
 class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
@@ -26,7 +25,6 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
     private var aborted = false
 
-    @OptIn(AnylineInternalFeature::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityScanBinding.inflate(layoutInflater)
@@ -49,10 +47,10 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
                         tireOverlayConfig = TireOverlayConfig().apply {
                             visible = shouldShowOverlay
                         }
-                        howToScanTooltipConfig = HowToScanTooltipConfig().apply {
+                        countdownConfig = CountdownConfig().apply {
                             visible = shouldShowOverlay
                         }
-                        lineProgressBarConfig = LineProgressBarConfig().apply {
+                        scanDirectionConfig = ScanDirectionConfig().apply {
                             visible = shouldShowOverlay
                         }
                     }

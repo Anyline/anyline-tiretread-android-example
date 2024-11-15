@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             if (initializeAnylineTireTreadSdk()) {
-                if (PreferencesUtils.shouldShowTireWidthDialog(this@MainActivity)) {
+                if (PreferencesUtils.shouldUseDeviceCompatibilityMode(this@MainActivity)) {
                     goToTireWidthActivity()
                 } else {
                     openScanActivity()
