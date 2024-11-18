@@ -12,8 +12,8 @@ repositories {
     maven { url "https://europe-maven.pkg.dev/anyline-ttr-sdk/maven" }
 }
 
-ext.versionMajor = 5
-ext.versionMinor = 17
+ext.versionMajor = 6
+ext.versionMinor = 0
 ext.versionPatch = 0
 ext.versionClassifier = System.getenv("VERSION_QUALIFIER")
 ext.buildNumber = System.getenv("BUILD_NUMBER")
