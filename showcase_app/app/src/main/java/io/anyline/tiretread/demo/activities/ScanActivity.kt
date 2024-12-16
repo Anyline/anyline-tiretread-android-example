@@ -17,6 +17,7 @@ import io.anyline.tiretread.sdk.ui.configs.CountdownConfig
 import io.anyline.tiretread.sdk.ui.configs.DefaultUiConfig
 import io.anyline.tiretread.sdk.ui.configs.ScanDirectionConfig
 import io.anyline.tiretread.sdk.ui.configs.TireOverlayConfig
+import io.anyline.tiretread.sdk.ui.configs.TireWidthInputConfig
 
 class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
 
@@ -39,9 +40,8 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         val tireWidth = intent.getIntExtra("tireWidth", -1)
 
         // Configure the TireTreadScanView
-
         binding.tireTreadScanView.apply {
-            withScanConfig(
+            init(
                 tireTreadScanViewConfig = TireTreadScanViewConfig().apply {
                     defaultUiConfig = DefaultUiConfig().apply {
                         tireOverlayConfig = TireOverlayConfig().apply {
@@ -79,9 +79,11 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
                     // additionalContext = AdditionalContext(tirePosition)
                 }, tireWidth = if (tireWidth > 0) {
                     tireWidth
-                } else null
-            )
-            scanViewCallback = this@ScanActivity
+                } else null, tireTreadScanViewCallback = this@ScanActivity
+            ) {
+                Toast.makeText(applicationContext, "Failed to initialize scan!", Toast.LENGTH_SHORT)
+                    .show()
+            }
             setViewCompositionStrategy(
                 ViewCompositionStrategy.DisposeOnLifecycleDestroyed(
                     this@ScanActivity
@@ -123,7 +125,6 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         finish()
     }
 
-
     private fun openLoadAndResultScreen(uuid: String) {
         val intent = Intent(this, MeasurementResultActivity::class.java).apply {
             putExtra("measurement_uuid", uuid)
@@ -131,7 +132,6 @@ class ScanActivity : AppCompatActivity(), TireTreadScanViewCallback {
         startActivity(intent)
         finish()
     }
-
 
     // This function is only intended for feedback and does not need to be implemented.
     private fun openBarcodeScanner(uuid: String?) {

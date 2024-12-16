@@ -81,11 +81,6 @@ class MainActivity : AppCompatActivity() {
         displayWelcomeMessages()
     }
 
-    private fun goToTireWidthActivity() {
-        val intent = Intent(this, TireWidthActivity::class.java)
-        startActivity(intent)
-    }
-
     override fun onPostResume() {
         super.onPostResume()
         binding.btnMainStart.isEnabled = true
@@ -108,11 +103,7 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             if (initializeAnylineTireTreadSdk()) {
-                if (PreferencesUtils.shouldUseDeviceCompatibilityMode(this@MainActivity)) {
-                    goToTireWidthActivity()
-                } else {
-                    openScanActivity()
-                }
+                openScanActivity()
             } else {
                 withContext(Dispatchers.Main) {
                     binding.btnMainStart.setText(R.string.btn_start)

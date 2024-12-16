@@ -53,10 +53,6 @@
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name=".activities.TireWidthActivity"
-            android:exported="false"
-            android:screenOrientation="sensorLandscape" />
-        <activity
             android:name=".activities.ScanBarcodeActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
