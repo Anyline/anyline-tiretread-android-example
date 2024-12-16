@@ -52,9 +52,6 @@ class SettingsActivity : AppCompatActivity() {
         binding.cbSettingsImperialSystem.isChecked =
             sharedPref.getBoolean(PreferencesUtils.KEY_IMPERIAL_SYSTEM, false)
 
-        binding.deviceCompatibilityModeCheckBox.isChecked =
-            PreferencesUtils.shouldUseDeviceCompatibilityMode(this)
-
         binding.showGuidanceCheckBox.isChecked = PreferencesUtils.shouldShowOverlay(this)
 
         binding.etSettingsLicenseKey.setText(
@@ -151,10 +148,6 @@ class SettingsActivity : AppCompatActivity() {
 
         val showOverlay = binding.showGuidanceCheckBox.isChecked
         PreferencesUtils.showOverlay(this, showOverlay)
-
-        PreferencesUtils.setShouldUseDeviceCompatibilityMode(
-            this, binding.deviceCompatibilityModeCheckBox.isChecked
-        )
 
         binding.customTagEditText.text.toString().let {
             if (it.isNotEmpty()) {

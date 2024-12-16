@@ -252,29 +252,6 @@
                 app:switchPadding="2dp" />
 
             <TextView
-                android:id="@+id/device_compatibility_mode_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:text="Device Compatibility Mode:"
-                android:textSize="16dp"
-                app:layout_constraintBottom_toBottomOf="@id/device_compatibility_mode_check_box"
-                app:layout_constraintEnd_toStartOf="@id/guideline_in_scroll_view"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/device_compatibility_mode_check_box" />
-
-            <CheckBox
-                android:id="@+id/device_compatibility_mode_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/stone_grey"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
-                app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
-                app:layout_constraintTop_toBottomOf="@id/scan_speed_text_view" />
-
-            <TextView
                 android:id="@+id/show_guidance_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -295,7 +272,7 @@
                 android:scaleY="1.5"
                 app:layout_constraintLeft_toRightOf="@id/use_imperial_system_label"
                 app:layout_constraintStart_toEndOf="@id/guideline_in_scroll_view"
-                app:layout_constraintTop_toBottomOf="@id/device_compatibility_mode_check_box" />
+                app:layout_constraintTop_toBottomOf="@id/scan_speed_text_view" />
 
             <TextView
                 android:id="@+id/custom_tag_label"

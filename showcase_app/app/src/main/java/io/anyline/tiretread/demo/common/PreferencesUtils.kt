@@ -13,7 +13,6 @@ object PreferencesUtils {
     private const val KEY_SCAN_SPEED = "KEY_SCAN_SPEED"
     private const val KEY_IS_RECORDER = "KEY_IS_RECORDER"
     private const val KEY_SHOW_OVERLAY = "KEY_SHOW_OVERLAY"
-    private const val KEY_USE_DEVICE_COMPATIBILITY_MODE = "KEY_SHOW_TIRE_WIDTH"
     private const val KEY_CUSTOM_TAG = "KEY_CUSTOM_TAG"
 
     /**
@@ -139,17 +138,6 @@ object PreferencesUtils {
     fun loadTireRegistrationCountForCurrentLicenseKey(context: Context, tireId: String): Int {
         val licenseKey = getLicenseKey(context) ?: ""
         return loadTireRegistrationCount(context, licenseKey, tireId)
-    }
-
-    fun shouldUseDeviceCompatibilityMode(context: Context): Boolean {
-        return loadDefaultSharedPreferences(context).getBoolean(
-            KEY_USE_DEVICE_COMPATIBILITY_MODE, true
-        )
-    }
-
-    fun setShouldUseDeviceCompatibilityMode(context: Context, value: Boolean) {
-        loadDefaultSharedPreferences(context).edit()
-            .putBoolean(KEY_USE_DEVICE_COMPATIBILITY_MODE, value).apply()
     }
 
     fun getCustomTag(context: Context): String? {
