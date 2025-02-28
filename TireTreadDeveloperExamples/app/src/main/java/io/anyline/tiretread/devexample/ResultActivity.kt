@@ -137,13 +137,23 @@ class ResultActivity : AppCompatActivity() {
                     .padding(10.dp)
             )
 
+            // Minimum value
+            Text(
+                text = String.format("%.2f", results.minimumValueMm),
+                color = if (isSystemInDarkTheme()) Color.Black else Color.White,
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .background(color = if (isSystemInDarkTheme()) Color.White else Color.Black)
+                    .padding(10.dp)
+            )
+
             // Heatmap
             HeatMapView(measurementUuid)
 
             // Regional values
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 results.regions.forEach { region ->
                     Text(
