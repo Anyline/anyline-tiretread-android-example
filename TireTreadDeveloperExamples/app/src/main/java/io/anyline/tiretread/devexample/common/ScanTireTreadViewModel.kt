@@ -57,13 +57,6 @@ class ScanTireTreadViewModel : ViewModel() {
 
     var measurementResultUpdateInterface: MeasurementResultUpdateInterface? = null
 
-    enum class CameraPermissionState {
-        NotRequested, Granted, Denied
-    }
-
-    val cameraPermissionStateLiveData: MutableLiveData<CameraPermissionState> =
-        MutableLiveData(CameraPermissionState.NotRequested)
-
     private var measurementResultData: MeasurementResultData? = null
     var measurementSystem = MeasurementSystem.Metric
     var useDefaultUi = false

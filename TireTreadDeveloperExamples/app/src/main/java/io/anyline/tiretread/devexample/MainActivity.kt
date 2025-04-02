@@ -1,19 +1,13 @@
 package io.anyline.tiretread.devexample
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -35,19 +29,10 @@ import io.anyline.tiretread.sdk.init
 
 class MainActivity : AppCompatActivity() {
 
-    private val CAMERA_PERMISSION_CODE = 100
-
     private lateinit var binding: ActivityMainBinding
     private val mainViewModel: MainViewModel by lazy {
         ViewModelProvider(this)[MainViewModel::class.java]
     }
-
-    private val postNotificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                startActivity(AdvancedMeasurementActivity.buildIntent(this))
-            }
-        }
 
     private var isInitialized: Boolean = false
     private var initializationError: String? = null
@@ -101,18 +86,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Check for Camera Permission
-        if (
-            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_CODE
-            )
-        }
-
         updateUi()
 
         // Simple implementation of the Tire Tread Scanner, using Compose
@@ -157,40 +130,12 @@ class MainActivity : AppCompatActivity() {
 
         // Advanced examples, demonstrating how to run async scans, for a more dynamic workflow
         binding.asyncConfigScanButton.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                postNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                startActivity(AdvancedMeasurementActivity.buildIntent(this))
-            }
+            startActivity(AdvancedMeasurementActivity.buildIntent(this))
         }
 
         // Example on how to store & load previous measurement results
         binding.resultsButton.setOnClickListener {
             startActivity(MeasurementResultListActivity.buildIntent(this))
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Permission granted. You can open the scanner now.",
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
-                // Permission denied, show a message to the user
-                Toast.makeText(
-                    this@MainActivity,
-                    "Permission denied. You won't be able to use the scanner",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
         }
     }
 
@@ -248,12 +193,10 @@ class MainActivity : AppCompatActivity() {
 
         if (selectConfigContent.hasContentToValidate()) {
             SelectConfigDialogFragment(
-                selectConfigContent,
-                onSelectConfigDialogFragmentButton
+                selectConfigContent, onSelectConfigDialogFragmentButton
             ).also { selectConfigDialogFragment ->
                 selectConfigDialogFragment.show(
-                    supportFragmentManager,
-                    SelectConfigDialogFragment.TAG
+                    supportFragmentManager, SelectConfigDialogFragment.TAG
                 )
             }
         } else {
@@ -265,8 +208,7 @@ class MainActivity : AppCompatActivity() {
     private fun showAlertDialog(title: String, message: String, onDismiss: (() -> Unit)? = null) {
         runOnUiThread {
             val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setTitle(title)
-                .setMessage(message)
+            alertDialogBuilder.setTitle(title).setMessage(message)
                 .setOnDismissListener { onDismiss?.invoke() }
             val alertDialog = alertDialogBuilder.create()
             alertDialog.show()

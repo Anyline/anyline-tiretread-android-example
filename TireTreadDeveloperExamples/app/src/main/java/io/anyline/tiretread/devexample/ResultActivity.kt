@@ -57,7 +57,7 @@ class ResultActivity : AppCompatActivity() {
         })
 
         intent.getStringExtra("uuid")?.let { uuid ->
-            setTitle("Results: $uuid")
+            title = "Results: $uuid"
             setContent { ResultScreen(viewModel, uuid) }
             viewModel.fetchResults(uuid)
         } ?: finish()
@@ -139,7 +139,7 @@ class ResultActivity : AppCompatActivity() {
 
             // Minimum value
             Text(
-                text = String.format("%.2f", results.minimumValueMm),
+                text = String.format("%.2f", results.minimumValue.valueMm),
                 color = if (isSystemInDarkTheme()) Color.Black else Color.White,
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,

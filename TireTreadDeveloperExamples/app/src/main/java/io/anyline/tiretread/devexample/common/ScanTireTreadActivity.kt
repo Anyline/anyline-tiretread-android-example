@@ -1,6 +1,5 @@
 package io.anyline.tiretread.devexample.common
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +8,6 @@ import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import io.anyline.tiretread.devexample.databinding.ActivityScanTireTreadBinding
@@ -27,19 +25,6 @@ class ScanTireTreadActivity : AppCompatActivity() {
     private val scanTireTreadViewModel: ScanTireTreadViewModel by lazy {
         ViewModelProvider(this)[ScanTireTreadViewModel::class.java]
     }
-
-    private val cameraPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                scanTireTreadViewModel.cameraPermissionStateLiveData.postValue(
-                    ScanTireTreadViewModel.CameraPermissionState.Granted
-                )
-            } else {
-                scanTireTreadViewModel.cameraPermissionStateLiveData.postValue(
-                    ScanTireTreadViewModel.CameraPermissionState.Denied
-                )
-            }
-        }
 
     private var doubleBackToExitPressedOnce = false
 
@@ -77,21 +62,7 @@ class ScanTireTreadActivity : AppCompatActivity() {
             }
         })
 
-        scanTireTreadViewModel.cameraPermissionStateLiveData.observe(this) { cameraPermissionState ->
-            when (cameraPermissionState) {
-                ScanTireTreadViewModel.CameraPermissionState.NotRequested -> {
-                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                }
-
-                ScanTireTreadViewModel.CameraPermissionState.Granted -> {
-                    inflateLayout()
-                }
-
-                ScanTireTreadViewModel.CameraPermissionState.Denied -> {
-                    finishWithResult(RESULT_CANCELED, null, CANCEL_MESSAGE_CAMERA_PERMISSION_DENIED)
-                }
-            }
-        }
+        inflateLayout()
 
         scanTireTreadViewModel.resultAction.observe(this) {
             finishWithResult(it.first, it.second, it.third)
@@ -257,7 +228,6 @@ class ScanTireTreadActivity : AppCompatActivity() {
         const val INTENT_EXTRA_OUT_CUSTOM_DATA = "INTENT_EXTRA_OUT_CUSTOM_DATA"
         const val INTENT_EXTRA_OUT_CANCEL_MESSAGE = "INTENT_EXTRA_OUT_CANCEL_MESSAGE"
 
-        const val CANCEL_MESSAGE_CAMERA_PERMISSION_DENIED = "Camera permission denied."
         const val CANCEL_MESSAGE_ABORTED = "Aborted."
         const val CANCEL_MESSAGE_ABORTED_WHILE_SCANNING = "Aborted while scanning."
         const val CANCEL_MESSAGE_ABORTED_WHILE_WAITING_FOR_RESULT =

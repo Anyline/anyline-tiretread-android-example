@@ -63,8 +63,8 @@
             android:name=".ComposeScanActivity"
             android:exported="false"
             android:label="ScanActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
+            android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".XmlScanActivity"
             android:exported="false"

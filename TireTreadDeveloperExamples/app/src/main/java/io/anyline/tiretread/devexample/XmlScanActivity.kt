@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import io.anyline.tiretread.devexample.databinding.ActivityXmlScanBinding
 import io.anyline.tiretread.sdk.scanner.ScanEvent
@@ -20,6 +21,7 @@ class XmlScanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityXmlScanBinding.inflate(layoutInflater, null, false)
         setContentView(binding.root)
 
@@ -36,10 +38,10 @@ class XmlScanActivity : AppCompatActivity() {
      * @see "https://documentation.anyline.com/tiretreadsdk-component/latest/android/scan-process.html#setup-with-a-config-object"
      */
     private fun initializeScanView(scanViewConfig: TireTreadScanViewConfig) {
-        binding.scanView.init(tireTreadScanViewConfig = scanViewConfig,
+        binding.scanView.init(
+            tireTreadScanViewConfig = scanViewConfig,
             tireWidth = null, // if tireWidth is not provided, the Tire Width Selection screen will be displayed automatically
-            onScanAborted = ::onScanAborted,
-            /*
+            onScanAborted = ::onScanAborted,/*
              * Invoked once all the frames were successfully uploaded for processing.
              * Once this callback is invoked, your application should take back the control of the workflow.
              * Use this to, e.g. finish this activity, redirect the user to a result screen, start fetching results in the background, etc.
