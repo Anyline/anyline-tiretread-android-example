@@ -41,18 +41,12 @@ class ComposeScanActivity : AppCompatActivity() {
      */
     @Composable
     private fun ScanViewWithConfigObject(scanViewConfig: TireTreadScanViewConfig) {
-        TireTreadScanView(config = scanViewConfig,
-            tireWidth = null, // if tireWidth is not provided, the Tire Width Selection screen will be displayed automatically
+        TireTreadScanView(
+            config = scanViewConfig,
+            tireWidth = null,
             onScanAborted = ::onScanAborted,
-            /*
-             * Invoked once all the frames were successfully uploaded for processing.
-             * Once this callback is invoked, your application should take back the control of the workflow.
-             * Use this to, e.g. finish this activity, redirect the user to a result screen, start fetching results in the background, etc.
-             */
             onScanProcessCompleted = ::openResultScreen,
-            callback = ::handleScanEvent, // sets this function as the scan event listener
-            // This is invoked whenever anything fails during the initialization of the Scan View.
-            // If something fails, your application should redirect the user flow to avoid the scanner.
+            callback = ::handleScanEvent,
             onError = { measurementUUID, exception ->
                 Log.e(getString(R.string.app_name), "Error for $measurementUUID:", exception)
                 Toast.makeText(this, "Failure: ${exception.message}", Toast.LENGTH_LONG).show()
