@@ -27,7 +27,7 @@ class ComposeScanActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             // This example provides a default config object to the Scan View.
-            // You can check the default values at https://documentation.anyline.com/tiretreadsdk-component/latest/scanconfiguration.html
+            // You can check the default values at https://documentation.anyline.com/tiretreadsdk-component/latest/scan-process/overview.html
             val defaultScanViewConfig = TireTreadScanViewConfig()
             ScanViewWithConfigObject(defaultScanViewConfig)
         }
@@ -37,7 +37,7 @@ class ComposeScanActivity : AppCompatActivity() {
      * Initializes a new TireTreadScanView with a TireTreadScanViewConfig object
      * @param scanViewConfig The configuration object for the TireTreadScanView.
      *
-     * @see "https://documentation.anyline.com/tiretreadsdk-component/latest/android/scan-process.html#setup-with-a-config-object"
+     * @see "https://documentation.anyline.com/tiretreadsdk-component/latest/scan-process/overview.html"
      */
     @Composable
     private fun ScanViewWithConfigObject(scanViewConfig: TireTreadScanViewConfig) {
@@ -63,7 +63,7 @@ class ComposeScanActivity : AppCompatActivity() {
     }
 
     /**
-     * docs: https://documentation.anyline.com/tiretreadsdk-component/latest/android/scan-process.html#android_sdk_callbacks
+     * docs: https://documentation.anyline.com/tiretreadsdk-component/latest/advanced/callbacks.html
      */
     private fun handleScanEvent(event: ScanEvent) {
         when (event) {
