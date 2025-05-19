@@ -2,216 +2,216 @@ package io.anyline.tiretread.devexample
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
-import androidx.lifecycle.ViewModelProvider
-import io.anyline.tiretread.devexample.advanced.AdvancedMeasurementActivity
-import io.anyline.tiretread.devexample.advanced.MeasurementResultListActivity
-import io.anyline.tiretread.devexample.config.SelectConfigContent
-import io.anyline.tiretread.devexample.config.SelectConfigDialogFragment
-import io.anyline.tiretread.devexample.config.SelectConfigFragment
-import io.anyline.tiretread.devexample.config.ValidationResult
-import io.anyline.tiretread.devexample.databinding.ActivityMainBinding
-import io.anyline.tiretread.devexample.simple.SimpleMeasurementActivity
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.dp
+import io.anyline.tiretread.devexample.results.ResultActivity
+import io.anyline.tiretread.devexample.scan_process.ComposeScanActivity
+import io.anyline.tiretread.devexample.scan_process.XmlScanActivity
+import io.anyline.tiretread.devexample.ucr.UcrActivity
+import io.anyline.tiretread.devexample.ui.components.DevExButton
+import io.anyline.tiretread.devexample.ui.components.DevExErrorContent
+import io.anyline.tiretread.devexample.ui.components.DevExLoadingView
+import io.anyline.tiretread.devexample.ui.theme.TTRDeveloperExamplesTheme
 import io.anyline.tiretread.sdk.AnylineTireTreadSdk
-import io.anyline.tiretread.sdk.NoConnectionException
-import io.anyline.tiretread.sdk.SdkLicenseKeyForbiddenException
-import io.anyline.tiretread.sdk.SdkLicenseKeyInvalidException
-import io.anyline.tiretread.sdk.init
 
-class MainActivity : AppCompatActivity() {
+/**
+ * MainActivity is the entry point of the application, responsible for initializing the Anyline Tire Tread SDK
+ * and providing navigation to different examples of the scan-process and result display.
+ *
+ * @property viewModel The ViewModel that manages the state and initialization of the Anyline Tire Tread SDK.
+ */
+class MainActivity : ComponentActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-    private val mainViewModel: MainViewModel by lazy {
-        ViewModelProvider(this)[MainViewModel::class.java]
-    }
+    private val viewModel: MainViewModel by viewModels()
 
-    private var isInitialized: Boolean = false
-    private var initializationError: String? = null
-
-    private val fragmentFactory = object : FragmentFactory() {
-        override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-            if (className == SelectConfigDialogFragment::class.java.name) {
-                return SelectConfigDialogFragment(
-                    mainViewModel.lastSelectConfigContent.value!!,
-                    mainViewModel.lastOnSelectConfigDialogFragmentButton.value!!
-                )
-            } else if (className == SelectConfigFragment::class.java.name) {
-                return SelectConfigFragment.newInstance(
-                    mainViewModel.lastSelectConfigContent.value!!,
-                    mainViewModel.lastOnSelectConfigDialogFragmentButton.value!!
-                )
-            }
-            val fragment = super.instantiate(classLoader, className)
-            return fragment
-        }
-    }
-
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     * Checks if the Anyline Tire Tread SDK is initialized, and if not, initializes it.
+     * Sets up the content view with Compose.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
-        supportFragmentManager.fragmentFactory = fragmentFactory
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish()
-            }
-        })
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // Check if the TTR SDK is initialized
+        if (!AnylineTireTreadSdk.isInitialized) {
+            // if not, initialize it
+            viewModel.initializeAnylineSDK(BuildConfig.LICENSE_KEY, this)
         }
 
-        isInitialized = when (AnylineTireTreadSdk.isInitialized) {
-            true -> true
-            false -> {
-                initializeAnylineTireTreadSdk { error ->
-                    initializationError = error
-                    Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-                }
+        setContent {
+            // Use you own app's theme, and define any UI elements as preferred.
+            TTRDeveloperExamplesTheme {
+                ScaffoldAndTopBar(content = {
+                    ExampleApp(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(it)
+                    )
+                })
             }
         }
-
-        updateUi()
-
-        // Simple implementation of the Tire Tread Scanner, using Compose
-        binding.composeActivityDefaultConfigScanButton.setOnClickListener {
-            startActivity(Intent(this, ComposeScanActivity::class.java))
-        }
-
-        // Simple implementation of the Tire Tread Scanner, using XML Layout
-        binding.xmlActivityDefaultConfigScanButton.setOnClickListener {
-            startActivity(Intent(this, XmlScanActivity::class.java))
-        }
-
-        // Example allowing to customize the properties of a TireTreadScanViewConfig object
-        binding.manualConfigScanButton.setOnClickListener {
-            requestScanConfig(SelectConfigContent.ManualConfigContent) { validationResult ->
-                when (validationResult) {
-                    is ValidationResult.Succeed -> {
-                        startActivity(SimpleMeasurementActivity.buildIntent(this, validationResult))
-                    }
-
-                    is ValidationResult.Failed -> {
-                        showAlertDialog(getString(R.string.app_name), validationResult.message)
-                    }
-                }
-            }
-        }
-
-        // Example using JSON files to configure the Tire Tread Scanner
-        binding.jsonConfigScanButton.setOnClickListener {
-            requestScanConfig(SelectConfigContent.JsonConfigContent) { validationResult ->
-                when (validationResult) {
-                    is ValidationResult.Succeed -> {
-                        startActivity(SimpleMeasurementActivity.buildIntent(this, validationResult))
-                    }
-
-                    is ValidationResult.Failed -> {
-                        showAlertDialog(getString(R.string.app_name), validationResult.message)
-                    }
-                }
-            }
-        }
-
-        // Advanced examples, demonstrating how to run async scans, for a more dynamic workflow
-        binding.asyncConfigScanButton.setOnClickListener {
-            startActivity(AdvancedMeasurementActivity.buildIntent(this))
-        }
-
-        // Example on how to store & load previous measurement results
-        binding.resultsButton.setOnClickListener {
-            startActivity(MeasurementResultListActivity.buildIntent(this))
-        }
     }
+}
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            onBackPressedDispatcher.onBackPressed()
-            return true
-        }
-        return false
-    }
+/* Composable functions */
 
-    private fun initializeAnylineTireTreadSdk(onError: ((String?) -> Unit)): Boolean {
-        // Try/Catch this to check if your license key is valid or not.
-        try {
-            //replace BuildConfig.LICENSE_KEY on line below with your license key
-            val licenseKey = BuildConfig.LICENSE_KEY
-            AnylineTireTreadSdk.init(licenseKey, applicationContext)
-            return true
-        } catch (e: SdkLicenseKeyInvalidException) {
-            onError.invoke(e.message)
-        } catch (e: SdkLicenseKeyForbiddenException) {
-            onError.invoke(e.message)
-        } catch (e: NoConnectionException) {
-            onError.invoke(e.message)
-        } catch (e: Exception) {
-            onError.invoke(e.message)
-        }
-        return false
-    }
+/**
+ * Sets up the main content of the app, including buttons for different examples
+ * and displaying error messages if the SDK initialization fails.
+ *
+ * @param viewModel The ViewModel that manages the state and initialization of the Anyline Tire Tread SDK.
+ * @param modifier Modifier to be applied to the layout.
+ */
+@Composable
+fun ExampleApp(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+    val isBusy by viewModel.busy
+    val ttrSdkInitialized by viewModel.ttrSdkInitialized
+    val initializationErrorMessage by viewModel.tireTreadSdkInitializationErrorMessage
 
-    private fun updateUi() {
-        if (AnylineTireTreadSdk.isInitialized) {
-            binding.versionTextview.text =
-                "Anyline TireTread SDK Version: ${AnylineTireTreadSdk.sdkVersion}"
-        } else {
-            binding.versionTextview.text = initializationError
-            binding.composeActivityDefaultConfigScanButton.isEnabled = false
-            binding.xmlActivityDefaultConfigScanButton.isEnabled = false
-            binding.manualConfigScanButton.isEnabled = false
-            binding.jsonConfigScanButton.isEnabled = false
-            binding.asyncConfigScanButton.isEnabled = false
-            binding.resultsButton.isEnabled = false
-        }
-    }
-
-    private fun requestScanConfig(
-        selectConfigContent: SelectConfigContent,
-        onSelectConfigDialogFragmentButton: ((ValidationResult) -> Unit)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(30.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .safeContentPadding()
+            .verticalScroll(rememberScrollState())
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
-
-        mainViewModel.lastSelectConfigContent.postValue(selectConfigContent)
-        mainViewModel.lastOnSelectConfigDialogFragmentButton.postValue(
-            onSelectConfigDialogFragmentButton
-        )
-
-        if (selectConfigContent.hasContentToValidate()) {
-            SelectConfigDialogFragment(
-                selectConfigContent, onSelectConfigDialogFragmentButton
-            ).also { selectConfigDialogFragment ->
-                selectConfigDialogFragment.show(
-                    supportFragmentManager, SelectConfigDialogFragment.TAG
-                )
-            }
-        } else {
-            val autoValidationResult = ValidationResult.Succeed(selectConfigContent)
-            onSelectConfigDialogFragmentButton.invoke(autoValidationResult)
+        when {
+            // Display error message if SDK initialization fails
+            initializationErrorMessage.isNotEmpty() -> DevExErrorContent(initializationErrorMessage)
+            // Buttons for different examples
+            else -> ExampleButtons(ttrSdkInitialized)
         }
+
+        // Display TTR SDK version, for debugging purposes
+        Text(
+            text = "SDK Version: ${AnylineTireTreadSdk.sdkVersion}",
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 
-    private fun showAlertDialog(title: String, message: String, onDismiss: (() -> Unit)? = null) {
-        runOnUiThread {
-            val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setTitle(title).setMessage(message)
-                .setOnDismissListener { onDismiss?.invoke() }
-            val alertDialog = alertDialogBuilder.create()
-            alertDialog.show()
+    // Display a custom loading indicator on top of the whole screen
+    DevExLoadingView(isBusy)
+}
+
+/**
+ * Sets up the buttons for different examples.
+ *
+ * @param ttrSdkInitialized Boolean indicating if the SDK is initialized.
+ */
+@Composable
+fun ExampleButtons(ttrSdkInitialized: Boolean) {
+    val context = LocalContext.current
+
+    /* Scan Process */
+
+    // Basic example, using a Compose Activity to scan
+    DevExButton(text = R.string.default_config_compose, isEnabled = ttrSdkInitialized) {
+        context.startActivity(Intent(context, ComposeScanActivity::class.java))
+    }
+    // Basic example, using an XML Activity to scan
+    DevExButton(text = R.string.default_config_xml, isEnabled = ttrSdkInitialized) {
+        context.startActivity(Intent(context, XmlScanActivity::class.java))
+    }
+
+    /* Results */
+
+    // Example Measurement UUID for requesting results
+    // ⚠️ In your implementation, use the Measurement UUID returned by
+    // the 'onScanProcessCompleted' callback of the ScanView to request its results.
+    val exampleMeasurementUUID = "8f2b96bc-8f0a-4a0a-8bbd-92f39270a0e7"
+
+    // Basic example, requesting results for a specific example Measurement UUID
+    DevExButton(text = R.string.results, isEnabled = ttrSdkInitialized) {
+        context.startActivity(
+            Intent(context, ResultActivity::class.java).apply {
+                putExtra("measurementUUID", exampleMeasurementUUID)
+            }
+        )
+    }
+
+    /* UCR */
+
+    // Basic example, requesting results for a specific example Measurement UUID
+    DevExButton(text = R.string.ucr, isEnabled = ttrSdkInitialized) {
+        context.startActivity(
+            Intent(context, UcrActivity::class.java).apply {
+                putExtra("measurementUUID", exampleMeasurementUUID)
+            }
+        )
+    }
+}
+
+/**
+ * Sets up the Scaffold with a top app bar.
+ *
+ * @param content The content to be displayed inside the Scaffold.
+ * @param modifier Modifier to be applied to the layout.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldAndTopBar(content: @Composable (PaddingValues) -> Unit, modifier: Modifier = Modifier) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "TireTread Developer Examples",
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            )
         }
+    ) { innerPadding ->
+        content(innerPadding)
+    }
+}
+
+/* Previews */
+
+@PreviewLightDark
+@PreviewScreenSizes
+@Composable
+fun ExampleAppPreview() {
+    val vm = MainViewModel().apply {
+        ttrSdkInitialized.value = true
+    }
+    TTRDeveloperExamplesTheme {
+        ScaffoldAndTopBar(content = {
+            ExampleApp(
+                viewModel = vm,
+                modifier = Modifier.padding(it)
+            )
+        })
     }
 }

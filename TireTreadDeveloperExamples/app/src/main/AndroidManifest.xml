@@ -21,7 +21,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -32,14 +31,10 @@
         android:theme="@style/Theme.TireTreadDevExample"
         android:usesCleartextTraffic="false"
         tools:targetApi="31">
-        <service
-            android:name=".advanced.NotificationService"
-            android:enabled="true"
-            android:foregroundServiceType="dataSync" />
-
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.TireTreadDevExample">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,51 +42,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".simple.SimpleMeasurementActivity"
-            android:exported="false"
-            android:label="SimpleMeasurementActivity" />
-        <activity
-            android:name=".advanced.AdvancedMeasurementActivity"
-            android:exported="false"
-            android:label="NewMeasurementActivity" />
-        <activity
-            android:name=".common.ScanTireTreadActivity"
-            android:exported="false"
-            android:label="ScanActivity"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
-        <activity
-            android:name=".ComposeScanActivity"
-            android:exported="false"
-            android:label="ScanActivity"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+            android:name=".scan_process.ComposeScanActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".XmlScanActivity"
-            android:exported="false"
-            android:label="ScanActivity"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
-        <activity
-            android:name=".ResultActivity"
-            android:exported="false"
-            android:label="ResultActivity" />
-        <activity
-            android:name=".advanced.MeasurementResultActivity"
-            android:exported="false"
-            android:label="MeasurementResultActivity" />
-        <activity
-            android:name=".advanced.MeasurementResultListActivity"
-            android:exported="false"
-            android:label="SelectMeasurementActivity" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
+            android:name=".scan_process.XmlScanActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".results.ResultActivity" />
+        <activity android:name=".ucr.UcrActivity" />
     </application>
 
 </manifest>

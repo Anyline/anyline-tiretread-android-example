@@ -1,18 +1,13 @@
 <resources>
-    <string name="app_name">TireTreadDevExample</string>
-    <string name="start_scanning">Start Scanning</string>
-    <string name="btn_compose_default_config_scan">Default Config - Compose</string>
-    <string name="btn_xml_default_config_scan">Default Config - XML</string>
-    <string name="btn_manual_config_scan">Manual Config</string>
-    <string name="btn_json_config_scan">JSON Config</string>
-    <string name="btn_async_config_scan">Async Scanning</string>
-    <string name="btn_measurement_results">Measurement Results</string>
-    <string name="select_measurement_result_view_options">View Options</string>
-
-    <string name="btn_ok">Ok</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="btn_details">Details</string>
-    <string name="btn_retry">Retry</string>
-
-    <string name="txt_token">Scan ID: %s</string>
+    <string name="app_name">TTRDeveloperExamples</string>
+    <!-- Scan Process-->
+    <string name="default_config_compose">Default Config - Compose</string>
+    <string name="default_config_xml">Default Config - XML</string>
+    <!-- Results-->
+    <string name="results">Results</string>
+    <string name="load_results">Load Results</string>
+    <!-- UCR -->
+    <string name="ucr">User-Corrected Results</string>
+    <string name="send_feedback_result">Send Result</string>
+    <string name="send_feedback_comment">Send Comment</string>
 </resources>

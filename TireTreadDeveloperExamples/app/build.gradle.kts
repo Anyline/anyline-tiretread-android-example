@@ -1,25 +1,24 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.jetbrains.kotlin.android)
     kotlin("plugin.serialization") version "2.0.20"
-    alias(libs.plugins.compose.compiler)
 }
 
 ext.apply {
-    set("versionMajor", 7)
-    set("versionMinor", 5)
+    set("versionMajor", 8)
+    set("versionMinor", 0)
     set("versionPatch", 0)
     set("buildNumber", System.getenv("BUILD_NUMBER"))
 }
 
 android {
     namespace = "io.anyline.tiretread.devexample"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "io.anyline.tiretread.devexample"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = generateVersionCode()
         versionName = generateVersionName()
 
@@ -74,28 +73,19 @@ android {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
-    implementation(composeBom)
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.swiperefreshlayout)
-
-    // Anyline Tire Tread SDK dependency
-    // ideally, you should pin (at least) the Major version of the SDK to avoid unexpected breaking changes
     implementation(libs.tireTread)
 
-    // Include the 'Compose' dependency to be able to
-    // integrate the TireTreadScanView in your Pages
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.compose.foundation)
-    implementation(libs.compose.material)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
 
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.appcompat)
 
     // Coil
     implementation(libs.coil.compose.core)
@@ -109,6 +99,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
 
 /**
