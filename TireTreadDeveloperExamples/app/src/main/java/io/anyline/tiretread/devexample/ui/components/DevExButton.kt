@@ -2,14 +2,19 @@ package io.anyline.tiretread.devexample.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.anyline.tiretread.devexample.R
 import io.anyline.tiretread.devexample.ui.theme.TTRDeveloperExamplesTheme
 
@@ -28,15 +33,24 @@ fun DevExButton(
     isEnabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    ElevatedButton(
+    Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF007AFF), // iOS system blue
+            contentColor = Color.White,
+            disabledContainerColor = Color(0xFF007AFF).copy(alpha = 0.5f),
+            disabledContentColor = Color.White.copy(alpha = 0.4f)
+        ),
         enabled = isEnabled,
-        modifier = modifier.fillMaxWidth()
+        shape = RoundedCornerShape(24.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
     ) {
         Text(
             text = stringResource(id = text),
-            color = MaterialTheme.colorScheme.onPrimary
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }

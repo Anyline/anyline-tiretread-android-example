@@ -5,7 +5,7 @@ plugins {
 }
 
 ext.apply {
-    set("versionMajor", 8)
+    set("versionMajor", 9)
     set("versionMinor", 0)
     set("versionPatch", 0)
     set("buildNumber", System.getenv("BUILD_NUMBER"))
@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "io.anyline.tiretread.devexample"
-        minSdk = 26
+        minSdk = 23
         targetSdk = 35
         versionCode = generateVersionCode()
         versionName = generateVersionName()

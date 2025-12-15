@@ -3,8 +3,12 @@
     <!-- Scan Process-->
     <string name="default_config_compose">Default Config - Compose</string>
     <string name="default_config_xml">Default Config - XML</string>
+    <string name="json_config">JSON Config</string>
+    <string name="select_json_config">Select JSON Configuration</string>
+    <string name="select_layout_type">Select Layout Type</string>
+    <string name="start_scan">Start Scan</string>
     <!-- Results-->
-    <string name="results">Results</string>
+    <string name="view_results">View Results</string>
     <string name="load_results">Load Results</string>
     <!-- UCR -->
     <string name="ucr">User-Corrected Results</string>

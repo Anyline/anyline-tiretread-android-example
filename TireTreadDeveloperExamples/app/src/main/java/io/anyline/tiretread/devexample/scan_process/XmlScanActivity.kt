@@ -6,9 +6,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import io.anyline.tiretread.devexample.R
 import io.anyline.tiretread.devexample.databinding.ActivityXmlScanBinding
 import io.anyline.tiretread.devexample.results.ResultActivity
+import io.anyline.tiretread.sdk.scanner.ScanEvent
+import io.anyline.tiretread.sdk.scanner.TireTreadScanner
 
 /***
  * Basic example for the use of the TireTreadScanView with XML Layouts.
@@ -22,20 +27,52 @@ class XmlScanActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        hideSystemBars()
         binding = ActivityXmlScanBinding.inflate(layoutInflater, null, false)
         setContentView(binding.root)
 
-        // This example does not provide any config object to the Scan View.
-        // You can check the default values at https://documentation.anyline.com/tiretreadsdk-component/latest/scan-process/overview.html
-        binding.scanView.init(
-            onScanAborted = ::onScanAborted,
-            onScanProcessCompleted = ::openResultScreen,
-            tireTreadScanViewCallback = null,
-            onError = { measurementUUID, exception ->
-                Log.e(getString(R.string.app_name), "Error for $measurementUUID:", exception)
-                Toast.makeText(this, "Failure: ${exception.message}", Toast.LENGTH_LONG).show()
-                finish()
-            })
+        // Check if JSON config path was provided
+        val jsonConfigPath = intent.getStringExtra("jsonConfigPath")
+
+        if (jsonConfigPath != null) {
+            // This example uses a JSON configuration file for the Scan View.
+            // The JSON config path is passed from the JsonConfigSelectionActivity.
+            binding.scanView.init(
+                tireTreadConfig = jsonConfigPath,
+                onScanAborted = ::onScanAborted,
+                onScanProcessCompleted = ::openResultScreen,
+                tireTreadScanViewCallback = ::handleScanEvent,
+                onError = { measurementUUID, exception ->
+                    Log.e(getString(R.string.app_name), "Error for $measurementUUID:", exception)
+                    Toast.makeText(this, "Failure: ${exception.message}", Toast.LENGTH_LONG).show()
+                    finish()
+                })
+        } else {
+            // This example does not provide any config object to the Scan View,
+            //      which means that a default configuration will be used.
+            // You can check the default values at https://documentation.anyline.com/tiretreadsdk-component/latest/scan-process/overview.html
+            binding.scanView.init(
+                onScanAborted = ::onScanAborted,
+                onScanProcessCompleted = ::openResultScreen,
+                tireTreadScanViewCallback = ::handleScanEvent,
+                onError = { measurementUUID, exception ->
+                    Log.e(getString(R.string.app_name), "Error for $measurementUUID:", exception)
+                    Toast.makeText(this, "Failure: ${exception.message}", Toast.LENGTH_LONG).show()
+                    finish()
+                })
+        }
+
+        // Log the current configuration as JSON (for debug purposes only)
+        try {
+            val configJson = TireTreadScanner.getTireTreadConfigAsJson()
+            Log.i(getString(R.string.app_name), "TireTreadConfig in use: $configJson")
+        } catch (e: Exception) {
+            Log.w(getString(R.string.app_name), "Could not get config JSON: ${e.message}")
+        }
+    }
+
+    private fun handleScanEvent(event: ScanEvent) {
+        Log.i(getString(R.string.app_name), event.toString())
     }
 
     private fun onScanAborted(measurementUUID: String?) {
@@ -53,5 +90,15 @@ class XmlScanActivity : AppCompatActivity() {
             putExtra("measurementUUID", uuid)
         })
         finish()
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.apply {
+            // Hide both navigation bar and status bar
+            hide(WindowInsetsCompat.Type.systemBars())
+            // Make bars appear temporarily on swipe, then auto-hide
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
 }

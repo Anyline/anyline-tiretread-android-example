@@ -48,6 +48,9 @@
             android:name=".scan_process.XmlScanActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".scan_process.JsonConfigSelectionActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".results.ResultActivity" />
         <activity android:name=".ucr.UcrActivity" />
     </application>

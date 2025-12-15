@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import io.anyline.tiretread.devexample.results.ResultActivity
 import io.anyline.tiretread.devexample.scan_process.ComposeScanActivity
+import io.anyline.tiretread.devexample.scan_process.JsonConfigSelectionActivity
 import io.anyline.tiretread.devexample.scan_process.XmlScanActivity
 import io.anyline.tiretread.devexample.ucr.UcrActivity
 import io.anyline.tiretread.devexample.ui.components.DevExButton
@@ -95,12 +96,13 @@ fun ExampleApp(viewModel: MainViewModel, modifier: Modifier = Modifier) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = modifier
             .fillMaxSize()
             .safeContentPadding()
             .verticalScroll(rememberScrollState())
             .background(color = MaterialTheme.colorScheme.background)
+            .padding(horizontal = 48.dp) // Add horizontal padding for button width
     ) {
         when {
             // Display error message if SDK initialization fails
@@ -140,6 +142,11 @@ fun ExampleButtons(ttrSdkInitialized: Boolean) {
         context.startActivity(Intent(context, XmlScanActivity::class.java))
     }
 
+    // Example using JSON configuration
+    DevExButton(text = R.string.json_config, isEnabled = ttrSdkInitialized) {
+        context.startActivity(Intent(context, JsonConfigSelectionActivity::class.java))
+    }
+
     /* Results */
 
     // Example Measurement UUID for requesting results
@@ -148,7 +155,7 @@ fun ExampleButtons(ttrSdkInitialized: Boolean) {
     val exampleMeasurementUUID = "8f2b96bc-8f0a-4a0a-8bbd-92f39270a0e7"
 
     // Basic example, requesting results for a specific example Measurement UUID
-    DevExButton(text = R.string.results, isEnabled = ttrSdkInitialized) {
+    DevExButton(text = R.string.view_results, isEnabled = ttrSdkInitialized) {
         context.startActivity(
             Intent(context, ResultActivity::class.java).apply {
                 putExtra("measurementUUID", exampleMeasurementUUID)
