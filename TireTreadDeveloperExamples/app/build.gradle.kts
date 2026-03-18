@@ -23,7 +23,7 @@ android {
         versionName = generateVersionName()
 
         buildConfigField(
-            "String", "LICENSE_KEY", "\"${System.getenv("TTR_SDK_DEVEX_LICENSE_KEY")}\""
+            "String", "LICENSE_KEY", "\"${resolveDevExampleLicenseKey()}\""
         )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -130,4 +130,14 @@ fun generateVersionName(): String {
         versionName += "+" + ext["buildNumber"]
     }
     return versionName
+}
+
+/**
+ * Resolve the license key for Android developer-example builds.
+ * CI and release automation provide this via TTR_SDK_DEVEX_LICENSE_KEY.
+ */
+fun resolveDevExampleLicenseKey(): String {
+    return System.getenv("TTR_SDK_DEVEX_LICENSE_KEY")
+        ?.takeIf { it.isNotBlank() }
+        ?: throw GradleException("Missing TTR_SDK_DEVEX_LICENSE_KEY environment variable.")
 }

@@ -12,7 +12,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2023.08.00"
 
-tireTreadSdk = "14.0.0"
+tireTreadSdk = "15.0.0"
 coilComposeCore = "3.0.4"
 
 [libraries]
