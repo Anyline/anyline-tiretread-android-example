@@ -4,13 +4,16 @@
 
 package io.anyline.tiretread.devexample.apiexplorer
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -160,6 +163,38 @@ fun ExplorerContent(
         uuid = initialUuid
     }
 
+    // === SECTION: Device Support ===
+
+    DevExSectionHeader("Device Support")
+
+    Column(
+        modifier = Modifier.padding(horizontal = pad),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        val isDeviceSupportBusy by viewModel.isDeviceSupportBusy
+        val deviceSupportResult by viewModel.deviceSupportResult
+        val deviceSupportIsError by viewModel.deviceSupportIsError
+        val activity = LocalActivity.current as? ApiExplorerActivity
+
+        val cameraPermissionLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { _ ->
+            activity?.let { viewModel.checkDeviceSupport(it) }
+        }
+
+        SpinnerButton("Check Device Support", isDeviceSupportBusy, color = Color(0xFF5856D6)) {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+
+        if (deviceSupportResult.isNotEmpty()) {
+            Text(
+                deviceSupportResult,
+                color = if (deviceSupportIsError) MaterialTheme.colorScheme.error else Color(0xFF34C759),
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+
     // === SECTION: Initialize ===
 
     DevExSectionHeader("Initialize")
@@ -175,10 +210,10 @@ fun ExplorerContent(
         )
 
         val isInitBusy by viewModel.isInitBusy
-        val activity = LocalActivity.current as? ApiExplorerActivity
+        val initActivity = LocalActivity.current as? ApiExplorerActivity
 
         SpinnerButton("Initialize", isInitBusy, color = Color(0xFF007AFF)) {
-            activity?.let { viewModel.initializeSDK(BuildConfig.LICENSE_KEY, it) }
+            initActivity?.let { viewModel.initializeSDK(BuildConfig.LICENSE_KEY, it) }
         }
 
         if (isInitialized) {

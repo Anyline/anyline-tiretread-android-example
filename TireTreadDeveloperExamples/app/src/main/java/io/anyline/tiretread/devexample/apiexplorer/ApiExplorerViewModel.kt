@@ -9,6 +9,11 @@ import io.anyline.tiretread.sdk.types.TreadDepthResult
 
 class ApiExplorerViewModel : ViewModel() {
 
+    // Device support
+    val isDeviceSupportBusy = mutableStateOf(false)
+    val deviceSupportResult = mutableStateOf("")
+    val deviceSupportIsError = mutableStateOf(false)
+
     // Init
     val isInitBusy = mutableStateOf(false)
     val isInitialized = mutableStateOf(false)
@@ -23,6 +28,24 @@ class ApiExplorerViewModel : ViewModel() {
     val treadDepthResult = mutableStateOf<TreadDepthResult?>(null)
     val resultsStatus = mutableStateOf("")
     val resultsIsError = mutableStateOf(false)
+
+    fun checkDeviceSupport(context: Context) {
+        isDeviceSupportBusy.value = true
+        deviceSupportResult.value = ""
+        AnylineTireTread.isDeviceSupported(context) { result ->
+            when (result) {
+                is SdkResult.Ok -> {
+                    deviceSupportResult.value = if (result.result) "Device is supported" else "Device is NOT supported"
+                    deviceSupportIsError.value = !result.result
+                }
+                is SdkResult.Err -> {
+                    deviceSupportResult.value = "${result.error.code}: ${result.error.message}"
+                    deviceSupportIsError.value = true
+                }
+            }
+            isDeviceSupportBusy.value = false
+        }
+    }
 
     fun initializeSDK(licenseKey: String, context: Context) {
         isInitBusy.value = true
