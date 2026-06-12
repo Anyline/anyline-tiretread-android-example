@@ -5,8 +5,8 @@ plugins {
 }
 
 ext.apply {
-    set("versionMajor", 9)
-    set("versionMinor", 0)
+    set("versionMajor", 10)
+    set("versionMinor", 1)
     set("versionPatch", 0)
     set("buildNumber", System.getenv("BUILD_NUMBER"))
 }
