@@ -1,0 +1,26 @@
+<!-- Chain-link glyph for the Correlation ID card. Stroke is a template; tint at
+     the call site. Matches the link icon in the handoff reference. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M9,12h6"/>
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M10.5,7.5h-2a4.5,4.5 0 0 0 0,9h2"/>
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.9"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M13.5,7.5h2a4.5,4.5 0 0 1 0,9h-2"/>
+</vector>

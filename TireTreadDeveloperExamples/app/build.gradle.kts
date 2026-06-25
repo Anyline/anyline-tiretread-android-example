@@ -1,12 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("plugin.serialization") version "2.0.20"
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.compose)
 }
 
 ext.apply {
-    set("versionMajor", 10)
-    set("versionMinor", 1)
+    set("versionMajor", 15)
+    set("versionMinor", 2)
     set("versionPatch", 0)
     set("buildNumber", System.getenv("BUILD_NUMBER"))
 }
@@ -25,6 +26,10 @@ android {
         buildConfigField(
             "String", "LICENSE_KEY", "\"${resolveDevExampleLicenseKey()}\""
         )
+        buildConfigField(
+            "String", "CLOUD_API_CLIENT_ID",
+            "\"" + System.getenv("TSW_CLOUD_API_CLIENT_ID") + "\""
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,10 +38,6 @@ android {
         viewBinding = true
         buildConfig = true
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     signingConfigs {

@@ -23,6 +23,10 @@ class ApiExplorerViewModel : ViewModel() {
     val scanStatus = mutableStateOf("")
     val scanStatusIsError = mutableStateOf(false)
 
+    // Sidewall result image — kept here (not in saved-state) so it survives
+    // rotation; the image is too large to store in the instance-state Bundle.
+    val sidewallImage = mutableStateOf<ByteArray?>(null)
+
     // Results
     val isResultsBusy = mutableStateOf(false)
     val treadDepthResult = mutableStateOf<TreadDepthResult?>(null)
