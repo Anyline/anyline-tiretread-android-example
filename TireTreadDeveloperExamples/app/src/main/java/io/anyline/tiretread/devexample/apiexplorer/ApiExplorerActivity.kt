@@ -87,6 +87,7 @@ import io.anyline.tiretread.sdk.api.FailedOutcome
 import io.anyline.tiretread.sdk.api.TswScanResult
 import io.anyline.tiretread.sdk.api.TswSupportStatus
 import io.anyline.tiretread.sdk.tsw.ui.configs.TswScannerConfig
+import io.anyline.tiretread.sdk.types.ShoulderWear
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Locale
@@ -231,6 +232,7 @@ fun ExplorerContent(
     var unitsIndex by rememberSaveable { mutableIntStateOf(0) } // Metric
     var heatmapStyleIndex by rememberSaveable { mutableIntStateOf(0) } // Colored
     var tireWidth by rememberSaveable { mutableStateOf("") }
+    var shoulderWearEnabled by rememberSaveable { mutableStateOf(false) }
     var includeCorrelationId by rememberSaveable { mutableStateOf(true) }
     // Generated once per page load; reused for both the tread-depth and sidewall scans.
     val correlationId = rememberSaveable { UUID.randomUUID().toString() }
@@ -314,6 +316,8 @@ fun ExplorerContent(
 
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
+        SwitchRow("Shoulder wear (BETA)", shoulderWearEnabled, sub = "InitOptions.shoulderWearEnabled, applied on Initialize") { shoulderWearEnabled = it }
+
         SetupRow(
             done = isInitialized,
             title = "Initialize SDK",
@@ -329,7 +333,7 @@ fun ExplorerContent(
             },
         ) {
             SoftButton("Initialize", busy = isInitBusy) {
-                activity?.let { viewModel.initializeSDK(BuildConfig.LICENSE_KEY, it) }
+                activity?.let { viewModel.initializeSDK(BuildConfig.LICENSE_KEY, it, shoulderWearEnabled) }
             }
         }
     }
@@ -617,6 +621,11 @@ fun ExplorerContent(
                     r.regions.forEachIndexed { i, region ->
                         RegionTile("R$i", formatMm(region.valueMm), modifier = Modifier.weight(1f))
                     }
+                }
+                SubHead("Shoulder wear (BETA)")
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    RegionTile("Left", formatShoulderWear(r.regions.first().shoulderWear), modifier = Modifier.weight(1f))
+                    RegionTile("Right", formatShoulderWear(r.regions.last().shoulderWear), modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -1079,6 +1088,12 @@ fun AppTopBar() {
 private val DEFAULT_TIRE_WIDTH_PRESETS = listOf(205, 215, 225, 235)
 
 private fun formatMm(value: Number): String = String.format(Locale.getDefault(), "%.2f", value)
+
+private fun formatShoulderWear(shoulderWear: ShoulderWear?): String = when (shoulderWear?.isWorn) {
+    true -> "Worn"
+    false -> "Not worn"
+    null -> "No estimate"
+}
 
 private fun buildConfigJson(
     appearanceIndex: Int,

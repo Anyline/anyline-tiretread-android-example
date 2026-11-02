@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import io.anyline.tiretread.sdk.api.AnylineTireTread
+import io.anyline.tiretread.sdk.api.InitOptions
 import io.anyline.tiretread.sdk.api.SdkResult
 import io.anyline.tiretread.sdk.types.TreadDepthResult
 
@@ -51,10 +52,10 @@ class ApiExplorerViewModel : ViewModel() {
         }
     }
 
-    fun initializeSDK(licenseKey: String, context: Context) {
+    fun initializeSDK(licenseKey: String, context: Context, shoulderWearEnabled: Boolean) {
         isInitBusy.value = true
         initError.value = ""
-        AnylineTireTread.initialize(context, licenseKey) { result ->
+        AnylineTireTread.initialize(context, licenseKey, InitOptions(shoulderWearEnabled = shoulderWearEnabled)) { result ->
             when (result) {
                 is SdkResult.Ok -> {
                     isInitialized.value = true
